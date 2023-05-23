@@ -12,8 +12,7 @@ import { adminContext } from '../../../adminContext';
 export default function LoginForm() {
   const navigate = useNavigate();
   const ApiUrl = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api`;
-  const { setloggedAdmin } = useContext(adminContext);
-
+  const { setLoggedAdmin } = useContext(adminContext);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -21,9 +20,6 @@ export default function LoginForm() {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
 
-  // modal//
-  const [showAlertModal, setShowAlertModal] = useState(false);
-  const [message, setMessage] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleEmailChange = (event) => {
@@ -39,9 +35,11 @@ export default function LoginForm() {
   };
 
   const logIn = async () => {
+    console.log(userEmail);
+    console.log(userPassword);
+
     if (userEmail === '' || userPassword === '') {
-      setMessage('יש למלא את כל הפרטים');
-      setShowAlertModal(true);
+      alert('יש למלא את כל הפרטים');
     } else {
       setUserEmail(userEmail.replace('%40', '@'));
       try {
@@ -53,16 +51,23 @@ export default function LoginForm() {
           },
         });
         const user = await response.json();
+        console.log(user);
 
         if (user.user_Status === 'non active') {
-          setMessage('משתמש זה אינו פעיל במערכת');
-          setShowAlertModal(true);
+          alert('משתמש זה אינו פעיל במערכת');
+          setUserEmail('');
+          setUserPassword('');
+        }
+        if (user.is_admin === false) {
+          alert('אינך מנהלת, היכנסי למתלבשות דרך האפליקציה');
+          setUserEmail('');
+          setUserPassword('');
         } else if (user.id > 0) {
-          setloggedAdmin(user);
+          setLoggedAdmin(user);
           // navigate('MainLayout');
+          navigate('/dashboard', { replace: true });
         } else {
-          setMessage('כתובת האימייל או הסיסמא שגויים');
-          setShowAlertModal(true);
+          alert('הפרטים שמילאת אינם קיימים במערכת');
           setUserEmail('');
           setUserPassword('');
         }
@@ -107,7 +112,7 @@ export default function LoginForm() {
         {/* <Checkbox name="remember" label="Remember me" /> */}
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
+      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={logIn}>
         התחברי
       </LoadingButton>
     </>
