@@ -25,7 +25,6 @@ export default function App() {
                 setLoggedAdmin,
               }}
             >
-              
               <ScrollToTop />
               <StyledChart />
               <Router />

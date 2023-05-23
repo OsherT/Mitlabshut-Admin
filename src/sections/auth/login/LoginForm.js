@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+
 // components
 import Iconify from '../../../components/iconify';
 import { adminContext } from '../../../adminContext';
-
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
@@ -30,9 +30,6 @@ export default function LoginForm() {
     setUserPassword(event.target.value);
   };
 
-  const handleClick = () => {
-    navigate('/dashboard', { replace: true });
-  };
 
   const logIn = async () => {
     console.log(userEmail);
@@ -83,8 +80,15 @@ export default function LoginForm() {
         <TextField
           name="email"
           label="דואר אלקטרוני"
-          value={userEmail} // Set the value of the TextField to the userEmail state
-          onChange={handleEmailChange} // Handle the change event and update the userEmail state
+          value={userEmail}
+          onChange={handleEmailChange}
+          // InputProps={{
+          //   style: { backgroundColor: '#ede6d7' },
+          // }}
+          InputProps={{
+            style: { backgroundColor: 'rgb(232, 240, 254)' },
+          }}
+          sx={{ direction: 'rtl' }}
         />
 
         <TextField
@@ -99,20 +103,35 @@ export default function LoginForm() {
                 </IconButton>
               </InputAdornment>
             ),
+            style: { backgroundColor: 'rgb(232, 240, 254)' },
           }}
-          value={userPassword} // Set the value of the TextField to the userPassword state
-          onChange={handlePasswordChange} // Handle the change event and update the userPassword state
+          value={userPassword}
+          onChange={handlePasswordChange}
+          sx={{ direction: 'rtl' }}
         />
       </Stack>
 
       <Stack direction="row" alignItems="flex-start" justifyContent="flex-end" sx={{ my: 2 }}>
-        <Typography variant="h4" gutterBottom>
+        {/* <Typography variant="h4" gutterBottom>
           זכור אותי{' '}
         </Typography>
-        {/* <Checkbox name="remember" label="Remember me" /> */}
+        <Checkbox name="remember" label="Remember me" /> */}
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={logIn}>
+      <LoadingButton
+        fullWidth
+        size="large"
+        type="submit"
+        variant="contained"
+        onClick={logIn}
+        sx={{
+          backgroundColor: '#d7ba7b',
+          '&:hover': {
+            backgroundColor: '#d7ba7b',
+          },
+          boxShadow: '0px 3px 5px #d7ba7b',
+        }}
+      >
         התחברי
       </LoadingButton>
     </>
