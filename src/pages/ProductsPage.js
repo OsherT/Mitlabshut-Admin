@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -17,9 +17,11 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-
 import { visuallyHidden } from '@mui/utils';
 import { TextField } from '@mui/material';
+import axios from 'axios';
+import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+
 import Iconify from '../components/iconify';
 
 export default function EnhancedTable() {
@@ -29,6 +31,13 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
+
+  // add new brand
+  const [isAdding, setIsAdding] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+
+  // search
+  const [filterName, setFilterName] = useState('');
 
   const ApiUrl = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item`;
 
@@ -152,8 +161,6 @@ export default function EnhancedTable() {
 
   function EnhancedTableToolbar(props) {
     const { numSelected } = props;
-    const [inputValue, setInputValue] = useState('');
-    const [isAdding, setIsAdding] = useState(false);
 
     const handleInputChange = (event) => {
       setInputValue(event.target.value);
@@ -166,8 +173,25 @@ export default function EnhancedTable() {
     const handlePostClick = () => {
       // Perform the action with the entered string (inputValue)
       console.log(inputValue);
+      if (inputValue === '') {
+        alert('אנא מלאי את שם המותג');
+      } else {
+        axios
+          .post(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostBrand?item_brand=${inputValue}`)
+          .then((res) => {
+            GetBrandsList();
+            alert('מותג התווסף בהצלחה');
+          })
+          .catch((err) => {
+            console.log('err in GetActiveUsersCount', err);
+          });
+        // Reset the input value and exit the add mode
+        setInputValue('');
+        setIsAdding(false);
+      }
+    };
 
-      // Reset the input value and exit the add mode
+    const handleCancleClick = () => {
       setInputValue('');
       setIsAdding(false);
     };
@@ -189,7 +213,13 @@ export default function EnhancedTable() {
         ) : (
           <>
             {isAdding ? (
-              <TextField label="הוסף מותג" value={inputValue} onChange={handleInputChange} sx={{ flex: '1 1 100%' }} />
+              <TextField
+                label="הוסיפי מותג חדש"
+                dir="rtl"
+                value={inputValue}
+                onChange={handleInputChange}
+                sx={{ flex: '1 1 100%', direction: 'rtl' }}
+              />
             ) : (
               <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
                 מותגים{' '}
@@ -197,11 +227,19 @@ export default function EnhancedTable() {
             )}
 
             {isAdding ? (
-              <Tooltip title="הוסיפי">
-                <IconButton onClick={handlePostClick}>
-                  <Iconify icon={'eva:checkmark-outline'} sx={{ mr: 2 }} />
-                </IconButton>
-              </Tooltip>
+              <>
+                <Tooltip title="הוסיפי">
+                  <IconButton onClick={handlePostClick}>
+                    <Iconify icon={'eva:checkmark-outline'} sx={{ mr: 2 }} />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="ביטול">
+                  <IconButton onClick={handleCancleClick}>
+                    <Iconify icon={'carbon:close'} sx={{ mr: 2 }} />
+                  </IconButton>
+                </Tooltip>
+              </>
             ) : (
               <Tooltip title="הוספת מותג">
                 <IconButton onClick={handleAddClick}>
@@ -260,21 +298,36 @@ export default function EnhancedTable() {
     setPage(0);
   };
 
+  const handleFilterByName = (event) => {
+    setPage(0);
+    setFilterName(event.target.value);
+  };
+
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  const visibleRows = React.useMemo(
-    () => stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage]
-  );
+  const filteredRows = React.useMemo(() => {
+    return rows.filter((row) => row.name.includes(filterName));
+  }, [rows, filterName]);
+
+  const sortedRows = React.useMemo(() => {
+    return stableSort(filteredRows, getComparator(order, orderBy));
+  }, [filteredRows, order, orderBy]);
+
+  const visibleRows = React.useMemo(() => {
+    return sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }, [sortedRows, page, rowsPerPage]);
 
   return (
     <Box sx={{ width: '40%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
+          {!isAdding && (
+            <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          )}
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
             <EnhancedTableHead
               numSelected={selected.length}
