@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Typography } from '@mui/material';
+import { Stack, IconButton, InputAdornment, TextField } from '@mui/material';
+
 import { LoadingButton } from '@mui/lab';
 
 // components
@@ -20,8 +21,6 @@ export default function LoginForm() {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
 
-  const [rememberMe, setRememberMe] = useState(false);
-
   const handleEmailChange = (event) => {
     setUserEmail(event.target.value);
   };
@@ -30,13 +29,14 @@ export default function LoginForm() {
     setUserPassword(event.target.value);
   };
 
-
   const logIn = async () => {
     console.log(userEmail);
     console.log(userPassword);
 
     if (userEmail === '' || userPassword === '') {
-      alert('יש למלא את כל הפרטים');
+                alert('אנא מלאי את כל הפרטים');
+
+ 
     } else {
       setUserEmail(userEmail.replace('%40', '@'));
       try {
@@ -76,6 +76,7 @@ export default function LoginForm() {
 
   return (
     <>
+
       <Stack spacing={3}>
         <TextField
           name="email"

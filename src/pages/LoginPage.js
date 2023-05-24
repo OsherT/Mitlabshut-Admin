@@ -75,7 +75,7 @@ export default function LoginPage() {
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }} textAlign={'center'}>
-              שכחת סיסמא? היכנסי לשחזר אותה באפליקציה
+              ❤ אין לך חשבון? שכחת סיסמא? היכנסי לאפליקציה שלנו
             </Typography>
 
             <Divider sx={{ my: 3 }}>
