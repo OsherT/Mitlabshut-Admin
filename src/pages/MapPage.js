@@ -1,31 +1,50 @@
+import React, { useEffect, useState } from 'react';
 import { Map, GoogleApiWrapper } from 'google-maps-react';
-
 import { Helmet } from 'react-helmet-async';
-// @mui
 import { Grid, Button, Container, Stack, Typography } from '@mui/material';
-// components
 import Iconify from '../components/iconify';
 
-// ----------------------------------------------------------------------
 const MapPage = (props) => {
   const mapStyles = {
-    width: '100%',
-    height: '400px',
+    width: 800,
+    height: 400,
   };
 
+  const [currentLocation, setCurrentLocation] = useState(null);
+
+  useEffect(() => {
+    // Get the user's current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentLocation({ lat: latitude, lng: longitude });
+      });
+    }
+  }, []);
+
   return (
-    <Map
-      google={props.google}
-      zoom={14}
-      style={mapStyles}
-      initialCenter={{
-        lat: 37.7749,
-        lng: -122.4194,
-      }}
-    />
+    <>
+      <Helmet>
+        <title>מפה</title>
+      </Helmet>
+      <Container>
+        <Stack direction="column" spacing={2}>
+          {currentLocation && (
+            <Map
+              google={props.google}
+              zoom={12}
+              style={mapStyles}
+              initialCenter={currentLocation}
+              language="he"
+
+            />
+          )}
+        </Stack>
+      </Container>
+    </>
   );
 };
 
 export default GoogleApiWrapper({
-  apiKey: 'AIzaSyA1U7xCIe-6cXLJvIwNdCBZxfKrlwfpz00', // Replace with your actual API key
+  apiKey: 'AIzaSyCoTMkSU4546Qd8K7z9GRE2SQXs_62MF0I', // Replace with your actual API key
 })(MapPage);
