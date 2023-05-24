@@ -1,5 +1,7 @@
 // component
 import SvgColor from '../../../components/svg-color';
+import Iconify from '../../../components/iconify';
+
 
 // ----------------------------------------------------------------------
 
@@ -7,35 +9,35 @@ const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ 
 
 const navConfig = [
   {
-    title: 'dashboard',
+    title: 'בית',
     path: '/dashboard/app',
-    icon: icon('ic_analytics'),
+    icon: <Iconify icon="system-uicons:home-alt" />,
   },
   {
-    title: 'user',
+    title: 'ניהול משתמשות',
     path: '/dashboard/user',
-    icon: icon('ic_user'),
+    icon:  <Iconify icon="system-uicons:user" />,
   },
   {
-    title: 'product',
+    title: 'ניהול פרטי מוצרים',
     path: '/dashboard/products',
-    icon: icon('ic_cart'),
+    icon: <Iconify icon="mdi:clothes-hanger" />,
   },
   {
-    title: 'blog',
-    path: '/dashboard/blog',
-    icon: icon('ic_blog'),
+    title: 'ניהול חנויות על המפה',
+    path: '/dashboard/map',
+    icon: <Iconify icon="system-uicons:location" />,
   },
-  {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
+  // {
+  //   title: 'login',
+  //   path: '/login',
+  //   icon: icon('ic_lock'),
+  // },
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: icon('ic_disabled'),
+  // },
 ];
 
 export default navConfig;
