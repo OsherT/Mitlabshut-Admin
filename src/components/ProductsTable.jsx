@@ -18,9 +18,15 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
-import { TextField } from '@mui/material';
 import axios from 'axios';
+import {TextField,
+  Stack,
+  Avatar,
+} from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
+
+
+
 import Iconify from './iconify';
 
 export default function ProductsTable(props) {
@@ -68,7 +74,7 @@ export default function ProductsTable(props) {
           }
         },
         (error) => {
-          console.log('barnd error', error);
+          console.log('GetList error', error);
         }
       );
   };
@@ -218,7 +224,7 @@ export default function ProductsTable(props) {
           <>
             {isAdding && (
               <TextField
-                label="הוסיפי מותג חדש"
+                label="הקלידי..."
                 dir="rtl"
                 value={inputValue}
                 onChange={handleInputChange}
