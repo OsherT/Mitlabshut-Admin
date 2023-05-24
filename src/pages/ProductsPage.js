@@ -19,6 +19,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 
 import { visuallyHidden } from '@mui/utils';
+import { TextField } from '@mui/material';
 import Iconify from '../components/iconify';
 
 export default function EnhancedTable() {
@@ -151,6 +152,25 @@ export default function EnhancedTable() {
 
   function EnhancedTableToolbar(props) {
     const { numSelected } = props;
+    const [inputValue, setInputValue] = useState('');
+    const [isAdding, setIsAdding] = useState(false);
+
+    const handleInputChange = (event) => {
+      setInputValue(event.target.value);
+    };
+
+    const handleAddClick = () => {
+      setIsAdding(true);
+    };
+
+    const handlePostClick = () => {
+      // Perform the action with the entered string (inputValue)
+      console.log(inputValue);
+
+      // Reset the input value and exit the add mode
+      setInputValue('');
+      setIsAdding(false);
+    };
 
     return (
       <Toolbar
@@ -167,24 +187,29 @@ export default function EnhancedTable() {
             {numSelected} נבחרו
           </Typography>
         ) : (
-          <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-            מותגים{' '}
-          </Typography>
-        )}
+          <>
+            {isAdding ? (
+              <TextField label="הוסף מותג" value={inputValue} onChange={handleInputChange} sx={{ flex: '1 1 100%' }} />
+            ) : (
+              <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
+                מותגים{' '}
+              </Typography>
+            )}
 
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton>
-              <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Add">
-            <IconButton>
-              {/* <FilterListIcon /> */}
-              <Iconify icon={'gala:add'} sx={{ mr: 2 }} />
-            </IconButton>
-          </Tooltip>
+            {isAdding ? (
+              <Tooltip title="הוסיפי">
+                <IconButton onClick={handlePostClick}>
+                  <Iconify icon={'eva:checkmark-outline'} sx={{ mr: 2 }} />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="הוספת מותג">
+                <IconButton onClick={handleAddClick}>
+                  <Iconify icon={'gala:add'} sx={{ mr: 2 }} />
+                </IconButton>
+              </Tooltip>
+            )}
+          </>
         )}
       </Toolbar>
     );
@@ -310,6 +335,7 @@ export default function EnhancedTable() {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="שורות לעמוד"
         />
       </Paper>
     </Box>
