@@ -68,7 +68,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.fullName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -93,9 +93,12 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [userList, setuserList] = useState([]);
-
-  const handleOpenMenu = (event) => {
+  const [status, setstatus] = useState('');
+  const [userID, setuserID] = useState("");
+  const handleOpenMenu = (event, status,id) => {
     setOpen(event.currentTarget);
+    setstatus(status);
+    setuserID(id);
   };
 
   const handleCloseMenu = () => {
@@ -110,7 +113,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = userList.map((n) => n.name);
+      const newSelecteds = userList.map((n) => n.fullName);
       setSelected(newSelecteds);
       return;
     }
@@ -131,7 +134,6 @@ export default function UserPage() {
     }
     setSelected(newSelected);
   };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -175,6 +177,9 @@ export default function UserPage() {
         console.log('err in getUserList', err);
       });
   }
+  // function BlockOrActiveUser() {
+    
+  // }
   return (
     <>
       <Helmet>
@@ -209,34 +214,37 @@ export default function UserPage() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { id, fullName, email, status, phoneNumber, userImage, age } = row;
-                    const selectedUser = selected.indexOf(id) !== -1;
-
+                    const selectedUser = selected.indexOf(fullName) !== -1;
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, id)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, fullName)} />
                         </TableCell>
 
-                        <TableCell component="th" scope="row" padding="none" alignItems="center">
-                          <Stack direction="row" alignItems="center" spacing={8}>
-                            <Avatar alt={fullName} src={userImage}/>
+                        <TableCell component="th" scope="row" padding="none" alignItems="right">
+                          <Stack direction="row" alignItems="right" spacing={8}>
+                            <Avatar alt={fullName} src={userImage} />
                             <Typography variant="subtitle2" noWrap marginLeft={9}>
                               {fullName}
                             </Typography>
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="center">{email}</TableCell>
-                        <TableCell align="center">{age}</TableCell>
-                        <TableCell align="center">{phoneNumber}</TableCell>
+                        <TableCell align="right">{email}</TableCell>
+                        <TableCell align="right">{age}</TableCell>
+                        <TableCell align="right">{phoneNumber}</TableCell>
 
-                        <TableCell align="center">
+                        <TableCell align="right">
                           <Label color={status === 'non active' ? 'error' : 'success'}>
                             {status === 'non active' ? 'החשבון אינו פעיל' : 'החשבון פעיל'}
                           </Label>
                         </TableCell>
-                        <TableCell align="center">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                        <TableCell align="right">
+                          <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={(event) => handleOpenMenu(event, row.status,row.id)}
+                          >
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -260,13 +268,13 @@ export default function UserPage() {
                           }}
                         >
                           <Typography variant="h6" paragraph>
-                            Not found
+                            לא נמצא
                           </Typography>
 
                           <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
+                          לא נמצאה משתמשת העונה לשם&nbsp;
+                          
+                           <strong>{filterName}</strong>
                           </Typography>
                         </Paper>
                       </TableCell>
@@ -285,6 +293,9 @@ export default function UserPage() {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage="שורות לעמוד"
+            
+
           />
         </Card>
       </Container>
@@ -298,7 +309,7 @@ export default function UserPage() {
         PaperProps={{
           sx: {
             p: 1,
-            width: 140,
+            width: 150,
             '& .MuiMenuItem-root': {
               px: 1,
               typography: 'body2',
@@ -307,14 +318,18 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Delete
+        <MenuItem
+          sx={{
+            color: status === 'non active' ? 'success.main' : 'error.main',
+          }}
+          // onClick={BlockOrActiveUser}
+        >
+          <Iconify
+            icon={status === 'non active' ? 'system-uicons:user-add' : 'system-uicons:no-sign'}
+            sx={{ mr: 2 }}
+            color={status === 'non active' ? 'success.main' : 'error.main'}
+          />
+          {status === 'non active' ? 'החזירי לפעילות ' : 'חסמי חשבון'}
         </MenuItem>
       </Popover>
     </>
