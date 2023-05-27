@@ -19,13 +19,8 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
-import {TextField,
-  Stack,
-  Avatar,
-} from '@mui/material';
+import { TextField, Stack, Avatar } from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
-
-
 
 import Iconify from './iconify';
 
@@ -130,7 +125,7 @@ export default function ProductsTable(props) {
       id: 'name',
       numeric: false,
       disablePadding: true,
-      label: 'שם מותג',
+      label: 'שם',
     },
   ];
 
@@ -191,7 +186,7 @@ export default function ProductsTable(props) {
   };
 
   function EnhancedTableToolbar(props) {
-    const { numSelected } = props;
+    // const { numSelected } = props;
 
     const handleInputChange = (event) => {
       setInputValue(event.target.value);
@@ -208,19 +203,15 @@ export default function ProductsTable(props) {
 
     return (
       <Toolbar
-        sx={{
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 },
-          ...(numSelected > 0 && {
-            bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-          }),
-        }}
+      //     sx={{
+      //       pl: { sm: 2 },
+      //       pr: { xs: 1, sm: 1 },
+      //       ...(numSelected > 0 && {
+      //         bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+      //       }),
+      //     }}
       >
-        {numSelected > 0 ? (
-          <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-            {numSelected} נבחרו
-          </Typography>
-        ) : (
+        {
           <>
             {isAdding && (
               <TextField
@@ -247,14 +238,14 @@ export default function ProductsTable(props) {
                 </Tooltip>
               </>
             ) : (
-              <Tooltip title="הוספת מותג">
+              <Tooltip title="הוספה">
                 <IconButton onClick={handleAddClick}>
                   <Iconify icon={'gala:add'} sx={{ mr: 2 }} />
                 </IconButton>
               </Tooltip>
             )}
           </>
-        )}
+        }
       </Toolbar>
     );
   }
@@ -327,13 +318,21 @@ export default function ProductsTable(props) {
   }, [sortedRows, page, rowsPerPage]);
 
   return (
-    <Box sx={{ width: '40%' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', width: '50%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
-          {!isAdding && (
-            <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-          )}
+          {/* search bar + add icon */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {!isAdding && (
+              <UserListToolbar
+                numSelected={selected.length}
+                filterName={filterName}
+                onFilterName={handleFilterByName}
+              />
+            )}
+            <EnhancedTableToolbar />
+          </Box>
+
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
             <EnhancedTableHead
               numSelected={selected.length}
