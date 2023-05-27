@@ -135,7 +135,7 @@ export default function ProductsTable(props) {
   ];
 
   function EnhancedTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { order, orderBy, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
       onRequestSort(event, property);
     };
@@ -144,13 +144,13 @@ export default function ProductsTable(props) {
       <TableHead>
         <TableRow>
           <TableCell padding="checkbox">
-           <text>{}</text>
+            <text>{}</text>
           </TableCell>
 
           {headCells.map((headCell) => (
             <TableCell
               key={headCell.id}
-              align={ 'left'}
+              align={'left'}
               padding={'normal'}
               sortDirection={orderBy === headCell.id ? order : false}
             >
@@ -183,8 +183,6 @@ export default function ProductsTable(props) {
   };
 
   function EnhancedTableToolbar() {
-    // const { numSelected } = props;
-
     const handleInputChange = (event) => {
       setInputValue(event.target.value);
     };
@@ -199,15 +197,7 @@ export default function ProductsTable(props) {
     };
 
     return (
-      <Toolbar
-      //     sx={{
-      //       pl: { sm: 2 },
-      //       pr: { xs: 1, sm: 1 },
-      //       ...(numSelected > 0 && {
-      //         bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-      //       }),
-      //     }}
-      >
+      <Toolbar>
         {
           <>
             {isAdding && (
@@ -377,8 +367,8 @@ export default function ProductsTable(props) {
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', width: '50%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+      <Paper sx={{ width: '50%', mb: 2 }}>
         <TableContainer>
           {/* search bar + add icon */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -404,12 +394,7 @@ export default function ProductsTable(props) {
             <TableBody>
               {visibleRows.map((row, index) => {
                 return (
-                  <TableRow
-                    hover
-                 
-                    key={row.name}
-                    sx={{ cursor: 'pointer' }}
-                  >
+                  <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
                     <TableCell align="left">
                       <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
                         <Iconify icon={'eva:more-vertical-fill'} />
