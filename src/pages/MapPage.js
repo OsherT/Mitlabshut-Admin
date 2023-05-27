@@ -12,13 +12,16 @@ import {
   TextField,
   DialogContentText,
   Box,
+  Alert,
+  AlertTitle,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import { Icon } from '@iconify/react';
-import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import swal from 'sweetalert';
+// import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
 const MapPage = (props) => {
   const mapStyles = {
@@ -78,6 +81,7 @@ const MapPage = (props) => {
     window.open(wazeURL);
   };
   const handleClickOpenForm = () => {
+
     setOpenForm(true);
   };
   const handleCloseForm = () => {
@@ -113,17 +117,17 @@ const MapPage = (props) => {
           opening_hours: 'null',
           address, // Use property shorthand
         };
-        axios.post('https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Stores/PostStore',newStore )
+        axios
+          .post('https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Stores/PostStore', newStore)
           .then((response) => {
+            swal("החנות נוספה!", "החנות נוספה בהצלחה וכעת מופיעה ל המפה", "success")
             handleCloseForm();
             GetStores();
-            alert("yay")
           })
           .catch((error) => {
             // Handle the error
             console.error('Error in post NewStore', error);
           });
-
       })
       .catch((error) => {
         console.error('Error in handleAdd:', error);
@@ -201,8 +205,7 @@ const MapPage = (props) => {
                 <Icon icon="simple-icons:waze" width="40" height="40" />
               </button>
             </Typography>
-            {selectedStore.facebook_link !== "" ? (
-
+            {selectedStore.facebook_link !== '' ? (
               <Typography gutterBottom>
                 <button
                   onClick={() => handleLinkIcon(selectedStore.facebook_link)}
@@ -212,7 +215,7 @@ const MapPage = (props) => {
                 </button>
               </Typography>
             ) : null}
-            {selectedStore.instegram_link !== "" ? (
+            {selectedStore.instegram_link !== '' ? (
               <Typography gutterBottom>
                 <button
                   onClick={() => handleLinkIcon(selectedStore.instegram_link)}
@@ -268,7 +271,6 @@ const MapPage = (props) => {
                     InputLabelProps={{ style: { textAlign: 'right' } }}
                     onChange={(event) => setname(event.target.value)}
                     error={!name && formError}
-
                   />
 
                   {/* <GooglePlacesAutocomplete
@@ -288,7 +290,6 @@ const MapPage = (props) => {
                     InputLabelProps={{ style: { textAlign: 'right' } }}
                     onChange={(event) => setphoneNumber(event.target.value)}
                     error={!phoneNumber && formError}
-
                   />
                   <TextField
                     required
@@ -299,7 +300,6 @@ const MapPage = (props) => {
                     InputLabelProps={{ style: { textAlign: 'right' } }}
                     onChange={(event) => setdescription(event.target.value)}
                     error={!description && formError}
-
                   />
                   <TextField
                     id="outlined-basic"
@@ -319,14 +319,13 @@ const MapPage = (props) => {
                   />
                   {/* Add more TextField components for other inputs */}
                 </div>
-                {formError && <Box sx={{ color: 'red', margin: '10px',textAlign:"right" }}>{formError}</Box>}
+                {formError && <Box sx={{ color: 'red', margin: '10px', textAlign: 'right' }}>{formError}</Box>}
               </>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseForm}>ביטול</Button>
               <Button onClick={handleAdd}>הוסיפי</Button>
             </DialogActions>
-            
           </Box>
         </Dialog>
       </div>
