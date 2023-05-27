@@ -17,7 +17,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
-import { TextField, Popover, MenuItem } from '@mui/material';
+import { TextField, Popover, MenuItem, Modal, Button } from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
 
 import Iconify from './iconify';
@@ -37,9 +37,13 @@ export default function ProductsTable(props) {
   // search
   const [filterName, setFilterName] = useState('');
 
-  //   edit modal
+  //  modal
   const [open, setOpen] = useState(null);
   const [name, setName] = useState(null);
+
+  // edit modal
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState('');
 
   useEffect(() => {
     GetList();
@@ -75,6 +79,7 @@ export default function ProductsTable(props) {
         }
       );
   };
+
   const handlePostClick = () => {
     if (inputValue === '') {
       alert('אנא מלאי את השדות הנדרשים');
@@ -327,8 +332,40 @@ export default function ProductsTable(props) {
     setOpen(null);
   };
 
+  const handleEdit = () => {
+    setOpen(null);
+    console.log('old', name);
+    console.log('new', editedName);
+    EditName();
+  };
+
+  const handleCloseEdit = () => {
+    setIsEditing(false);
+    setOpen(null);
+    setEditedName('');
+  };
+
   const EditName = () => {
-    console.log('EditName', name);
+    // const confirmUpdate = window.confirm(`האם את בטוחה? \nיתכן וישתנו פריטים לצמיתות`);
+
+    // if (confirmUpdate) {
+    if (editedName !== '') {
+      axios
+        .put(`${props.updateApi}${name}&New${props.columnName}Name=${editedName}`)
+
+        .then((res) => {
+          setIsEditing(false);
+          GetList();
+          alert(`${name} was update successfully to ${editedName}.`);
+          setEditedName('');
+        })
+        .catch((err) => {
+          console.log('EditName error', err);
+        });
+      // }
+    } else {
+      alert('אנא ודאי שמילאת פרטים עדכניים');
+    }
   };
 
   const DeleteName = () => {
@@ -456,7 +493,7 @@ export default function ProductsTable(props) {
             sx={{
               color: 'success.main',
             }}
-            onClick={() => EditName(name)}
+            onClick={() => setIsEditing(true)}
           >
             <Iconify icon={'carbon:edit'} sx={{ mr: 2 }} color={'success.main'} />
             {'עריכה '}
@@ -472,6 +509,50 @@ export default function ProductsTable(props) {
             {'מחיקה '}
           </MenuItem>
         </Popover>
+
+        <Modal
+          open={isEditing}
+          onClose={() => setIsEditing(false)}
+          aria-labelledby="modal-title"
+          aria-describedby="modal-description"
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              boxShadow: 24,
+              p: 4,
+              width: '300px',
+              textAlign: 'center',
+            }}
+          >
+            <h2 id="modal-title">עריכה</h2>
+            <TextField
+              label="שם"
+              defaultValue={name}
+              onChange={(event) => setEditedName(event.target.value)}
+              fullWidth
+            />
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                mt: 2,
+              }}
+            >
+              <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCloseEdit}>
+                ביטול
+              </Button>
+              <Button variant="contained" sx={{ bgcolor: 'green' }} onClick={handleEdit}>
+                שמירה
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
       </Paper>
     </Box>
   );
