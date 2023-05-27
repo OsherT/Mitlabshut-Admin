@@ -39,6 +39,7 @@ UserListToolbar.propTypes = {
 };
 
 export default function UserListToolbar({ numSelected, filterName, onFilterName }) {
+  
   return (
     <StyledRoot
       sx={{
@@ -67,9 +68,9 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
+        <Tooltip title="חסמי חשבונות">
           <IconButton>
-            <Iconify icon="eva:trash-2-fill" />
+            <Iconify icon="system-uicons:no-sign" />
           </IconButton>
         </Tooltip>
       ) : (

@@ -39,13 +39,15 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'userImage', lable: '', alignRight: true },
   { id: 'fullName', label: 'שם מלא', alignRight: true },
   { id: 'email', label: 'מייל', alignRight: true },
   { id: 'age', label: 'גיל', alignRight: true },
   { id: 'phoneNumber', label: 'מספר טלפון', alignRight: true },
   { id: 'userStatus', label: 'סטטוס', alignRight: true },
-  { id: 'isAdmin', label: '', alignRight: true },
+  { id: 'isAdmin', label: 'מנהלת', alignRight: true },
   { id: '' },
+  
 ];
 // ----------------------------------------------------------------------
 
@@ -102,9 +104,9 @@ export default function UserPage() {
 
   const [userID, setuserID] = useState('');
 
-  const [isAdmin, setisAdmin] = useState("")
+  const [isAdmin, setisAdmin] = useState('');
 
-  const handleOpenMenu = (event, status, id,isAdmin) => {
+  const handleOpenMenu = (event, status, id, isAdmin) => {
     setOpen(event.currentTarget);
     setstatus(status);
     setuserID(id);
@@ -125,6 +127,8 @@ export default function UserPage() {
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = userList.map((n) => n.fullName);
+      const selectedIds = userList.map((n) => n.id);
+      console.log(selectedIds);
       setSelected(newSelecteds);
       return;
     }
@@ -217,15 +221,6 @@ export default function UserPage() {
       </Helmet>
 
       <Container>
-        {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            User
-          </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button>
-        </Stack> */}
-
         <Card>
           <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
@@ -243,23 +238,26 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, fullName, email, status, phoneNumber, userImage, age,isAdmin } = row;
+                    const { id, fullName, email, status, phoneNumber, userImage, age, isAdmin } = row;
                     const selectedUser = selected.indexOf(fullName) !== -1;
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, fullName)} />
-                        </TableCell>
+                        </TableCell> */}
 
-                        <TableCell component="th" scope="row" padding="none" alignItems="right">
-                          <Stack direction="row" alignItems="right" spacing={8}>
-                            <Avatar alt={fullName} src={userImage} />
-                            <Typography variant="subtitle2" noWrap marginLeft={9}>
+                        {/* <TableCell component="th" scope="row" padding="20px" >
+                          <Stack direction="row" alignItems="center" spacing={4}>
+                            <Avatar alt={fullName} src={userImage} sx={{ margin: '10px' }}/>
+                            <Typography variant="subtitle2"  >
                               {fullName}
                             </Typography>
                           </Stack>
+                        </TableCell> */}
+                        <TableCell align="right">
+                          <Avatar alt={fullName} src={userImage} sx={{ margin: '10px' }} />
                         </TableCell>
-
+                        <TableCell align="right">{fullName}</TableCell>
                         <TableCell align="right">{email}</TableCell>
                         <TableCell align="right">{age}</TableCell>
                         <TableCell align="right">{phoneNumber}</TableCell>
@@ -269,20 +267,20 @@ export default function UserPage() {
                             {status === 'non active' ? 'החשבון אינו פעיל' : 'החשבון פעיל'}
                           </Label>
                         </TableCell>
-                        <TableCell align="right">
+                        <TableCell align="right" >
                           {isAdmin && (
-                            <Tooltip title="מנהלת">
-                            <IconButton size="large" color="inherit">
-                              <Icon icon="material-symbols:admin-panel-settings-outline" color="#d7ba7b" />
-                            </IconButton>
-                          </Tooltip>
+                            <Tooltip >
+                              <IconButton size="large" color="inherit" disabled>
+                                <Icon icon="material-symbols:admin-panel-settings-outline" color="#d7ba7b" />
+                              </IconButton>
+                            </Tooltip>
                           )}
                         </TableCell>
                         <TableCell align="right">
                           <IconButton
                             size="large"
                             color="inherit"
-                            onClick={(event) => handleOpenMenu(event, row.status, row.id,row.isAdmin)}
+                            onClick={(event) => handleOpenMenu(event, row.status, row.id, row.isAdmin)}
                           >
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
@@ -369,7 +367,7 @@ export default function UserPage() {
         </MenuItem>
         <MenuItem
           sx={{
-            color: isAdmin === false  ? 'success.main' : 'error.main',
+            color: isAdmin === false ? 'success.main' : 'error.main',
           }}
           onClick={ChangeIsAdmin}
         >
