@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography } from '@mui/material';
+import { Grid, Container, Typography, Divider } from '@mui/material';
 
 import ProductsTable from '../components/ProductsTable';
 
@@ -271,7 +271,7 @@ export default function DashboardAppPage() {
             />
           </Grid> */}
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppTasks
               title="Tasks"
               list={[
@@ -282,8 +282,15 @@ export default function DashboardAppPage() {
                 { id: '5', label: 'Sprint Showcase' },
               ]}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
+
+        <Divider sx={{ my: 5, border: 1, borderBlockColor: 'lightgray' }}>
+          {/* 
+               
+            */}
+        </Divider>
+
         <ProductsTable
           getApi={sentencesGetApi}
           postApi={sentencesPostApi}

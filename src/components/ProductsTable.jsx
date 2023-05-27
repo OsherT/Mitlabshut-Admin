@@ -72,7 +72,8 @@ export default function ProductsTable(props) {
           } else if (props.columnName === 'color') {
             setRows(data.map((item) => ({ name: item.color_name })));
           } else if (props.columnName === 'content') {
-            setRows(data.map((item) => ({ name: item.content })));
+            setRows(data.map((item) => ({ id: item.id, name: item.content })));
+            console.log('row', rows);
           }
         },
         (error) => {
@@ -272,7 +273,6 @@ export default function ProductsTable(props) {
     setFilterName(event.target.value);
   };
 
-
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -335,7 +335,7 @@ export default function ProductsTable(props) {
 
   const DeleteName = () => {
     const confirmDelete = window.confirm(`האם את בטוחה? \nיתכן וימחקו פריטים לצמיתות`);
-
+    console.log('name', name);
     if (confirmDelete) {
       axios
         .delete(props.deleteApi + name)
@@ -380,9 +380,15 @@ export default function ProductsTable(props) {
                 return (
                   <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
                     <TableCell align="left">
-                      <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
-                        <Iconify icon={'eva:more-vertical-fill'} />
-                      </IconButton>
+                      {props.columnName !== 'content' ? (
+                        <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
+                          <Iconify icon={'eva:more-vertical-fill'} />
+                        </IconButton>
+                      ) : (
+                        <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.id)}>
+                          <Iconify icon={'eva:more-vertical-fill'} />
+                        </IconButton>
+                      )}
                     </TableCell>
 
                     {/* <TableCell component="th" id={labelId} scope="row" padding="none"> */}
