@@ -5,8 +5,9 @@ import axios from 'axios';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
-// components
-import Iconify from '../components/iconify';
+
+import ProductsTable from '../components/ProductsTable';
+
 // sections
 import {
   AppTasks,
@@ -20,6 +21,9 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
+// components
+import Iconify from '../components/iconify';
+
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
@@ -28,6 +32,14 @@ export default function DashboardAppPage() {
   const [StoresNum, setStoresNum] = useState(0);
   const [ActiveItems, setActiveItems] = useState(0);
   const [SoldItems, setSoldItems] = useState(0);
+
+  // sentences
+  const sentencesPostApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/PostSentence?content=`;
+  const sentencesGetApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/GetSentences`;
+  const sentencesDeleteApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/DeleteSentence/`;
+  const sentencesUpdateApi = ``;
+  const sentencesColumnName = 'content';
+
   useEffect(() => {
     GetActiveUsersCount();
     GetStoresCount();
@@ -45,6 +57,7 @@ export default function DashboardAppPage() {
         console.log('err in GetActiveUsersCount', err);
       });
   }
+
   function GetStoresCount() {
     axios
       .get(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Stores/GetStoresCount`)
@@ -55,6 +68,7 @@ export default function DashboardAppPage() {
         console.log('err in GetStoresCount', err);
       });
   }
+
   function GetActiveItemCount() {
     axios
       .get(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/GetActiveItemCount`)
@@ -65,6 +79,7 @@ export default function DashboardAppPage() {
         console.log('err in GetActiveItemCount', err);
       });
   }
+
   function GetSoldItemCount() {
     axios
       .get(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/GetSoldItemCount`)
@@ -85,23 +100,22 @@ export default function DashboardAppPage() {
         {/* <Typography variant="h4" sx={{ mb: 5 }}>
           ברוכה הבאה{' '}
         </Typography> */}
-
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="חנויות על המפה" total={StoresNum} icon={'system-uicons:location'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary
-              title="משתמשות פעילות"
-              total={ActiveUsersNum}
-              color="info"
-              icon={"system-uicons:user"}
-            />
+            <AppWidgetSummary title="משתמשות פעילות" total={ActiveUsersNum} color="info" icon={'system-uicons:user'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="פריטים זמינים באפליקציה" total={ActiveItems} color="warning" icon={'mdi:clothes-hanger'} />
+            <AppWidgetSummary
+              title="פריטים זמינים באפליקציה"
+              total={ActiveItems}
+              color="warning"
+              icon={'mdi:clothes-hanger'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -270,6 +284,13 @@ export default function DashboardAppPage() {
             />
           </Grid>
         </Grid>
+        <ProductsTable
+          getApi={sentencesGetApi}
+          postApi={sentencesPostApi}
+          deleteApi={sentencesDeleteApi}
+          updateApi={sentencesUpdateApi}
+          columnName={sentencesColumnName}
+        />
       </Container>
     </>
   );

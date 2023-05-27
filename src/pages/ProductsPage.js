@@ -63,7 +63,7 @@ export default function ProductsPage() {
           />
         </div>
       </div>
-      <Divider sx={{ my: 10, border: 1, borderBlockColor: 'lightgreen' }}>
+      <Divider sx={{ my: 10, border: 1, borderBlockColor: 'lightgray' }}>
         {/* 
                
             */}
@@ -88,7 +88,7 @@ export default function ProductsPage() {
           />
         </div>
       </div>
-      <Divider sx={{ my: 10, border: 1, borderBlockColor: 'lightgreen' }}>
+      <Divider sx={{ my: 10, border: 1, borderBlockColor: 'lightgray' }}>
         {/* 
                
             */}
