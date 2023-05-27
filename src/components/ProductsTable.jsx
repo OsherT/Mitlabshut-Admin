@@ -19,7 +19,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
-import { TextField, Stack, Avatar } from '@mui/material';
+import { TextField, Popover, MenuItem } from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
 
 import Iconify from './iconify';
@@ -38,6 +38,9 @@ export default function ProductsTable(props) {
 
   // search
   const [filterName, setFilterName] = useState('');
+
+  const [open, setOpen] = useState(null);
+  const [name, setName] = useState(null);
 
   useEffect(() => {
     GetList();
@@ -317,6 +320,40 @@ export default function ProductsTable(props) {
     return sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [sortedRows, page, rowsPerPage]);
 
+  const handleOpenMenu = (event, name) => {
+    setOpen(event.currentTarget);
+    setName(name);
+  };
+
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
+
+  const EditName = () => {
+    console.log('EditName', name);
+  };
+
+  const DeleteName = () => {
+    console.log('DeleteName', name);
+    console.log('api', props.deleteApi + name);
+
+    const confirmDelete = window.confirm(`האם את בטוחה? \nיתכן וימחקו פריטים לצמיתות`);
+
+    if (confirmDelete) {
+      axios
+        .delete(props.deleteApi + name)
+        .then((res) => {
+          alert(`${name} was deleted successfully.`);
+          console.log(res);
+          GetList();
+        })
+        .catch((err) => {
+          console.log('DeleteName error', err);
+        });
+    }
+    setOpen(null);
+  };
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', width: '50%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -358,6 +395,15 @@ export default function ProductsTable(props) {
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
+                    <TableCell align="right">
+                      <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
+                        <Iconify icon={'eva:more-vertical-fill'} />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                      {row.name}
+                    </TableCell>
+
                     <TableCell padding="checkbox">
                       <Checkbox
                         color="primary"
@@ -366,9 +412,6 @@ export default function ProductsTable(props) {
                           'aria-labelledby': labelId,
                         }}
                       />
-                    </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.name}
                     </TableCell>
                   </TableRow>
                 );
@@ -385,6 +428,7 @@ export default function ProductsTable(props) {
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -395,6 +439,45 @@ export default function ProductsTable(props) {
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="שורות לעמוד"
         />
+
+        <Popover
+          open={Boolean(open)}
+          anchorEl={open}
+          onClose={handleCloseMenu}
+          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          PaperProps={{
+            sx: {
+              p: 1,
+              width: 150,
+              '& .MuiMenuItem-root': {
+                px: 1,
+                typography: 'body2',
+                borderRadius: 0.75,
+              },
+            },
+          }}
+        >
+          <MenuItem
+            sx={{
+              color: 'success.main',
+            }}
+            onClick={() => EditName(name)}
+          >
+            <Iconify icon={'carbon:edit'} sx={{ mr: 2 }} color={'success.main'} />
+            {'עריכה '}
+          </MenuItem>
+
+          <MenuItem
+            sx={{
+              color: 'error.main',
+            }}
+            onClick={DeleteName}
+          >
+            <Iconify icon={'mdi-light:delete'} sx={{ mr: 2 }} color={'error.main'} />
+            {'מחיקה '}
+          </MenuItem>
+        </Popover>
       </Paper>
     </Box>
   );

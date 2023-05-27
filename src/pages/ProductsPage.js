@@ -402,6 +402,7 @@ export default function ProductsPage() {
   // Brand
   const brandPostApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostBrand?item_brand=`;
   const brandGetApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/GetBrand`;
+  const brandDeleteApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/DeleteItemBrand/`;
   const brandColumnName = 'brand';
 
   // Category
@@ -430,7 +431,12 @@ export default function ProductsPage() {
     <div>
       <div style={{ display: 'flex' }}>
         <div>
-          <ProductsTable getApi={brandGetApi} postApi={brandPostApi} columnName={brandColumnName} />
+          <ProductsTable
+            getApi={brandGetApi}
+            postApi={brandPostApi}
+            deleteApi={brandDeleteApi}
+            columnName={brandColumnName}
+          />
         </div>
         <div>
           <ProductsTable getApi={categoryGetApi} postApi={categoryPostApi} columnName={categoryColumnName} />
