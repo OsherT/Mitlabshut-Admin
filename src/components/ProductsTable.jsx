@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,14 +11,12 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
-import { TextField, Popover, MenuItem } from '@mui/material';
+import { TextField, Popover, MenuItem, Modal, Button } from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
 
 import Iconify from './iconify';
@@ -39,8 +36,13 @@ export default function ProductsTable(props) {
   // search
   const [filterName, setFilterName] = useState('');
 
+  //  modal
   const [open, setOpen] = useState(null);
   const [name, setName] = useState(null);
+
+  // edit modal
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState('');
 
   useEffect(() => {
     GetList();
@@ -133,7 +135,7 @@ export default function ProductsTable(props) {
   ];
 
   function EnhancedTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { order, orderBy, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
       onRequestSort(event, property);
     };
@@ -142,22 +144,14 @@ export default function ProductsTable(props) {
       <TableHead>
         <TableRow>
           <TableCell padding="checkbox">
-            <Checkbox
-              color="primary"
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={rowCount > 0 && numSelected === rowCount}
-              onChange={onSelectAllClick}
-              inputProps={{
-                'aria-label': 'select all desserts',
-              }}
-            />
+            <text>{}</text>
           </TableCell>
 
           {headCells.map((headCell) => (
             <TableCell
               key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
-              padding={headCell.disablePadding ? 'none' : 'normal'}
+              align={'left'}
+              padding={'normal'}
               sortDirection={orderBy === headCell.id ? order : false}
             >
               <TableSortLabel
@@ -188,9 +182,7 @@ export default function ProductsTable(props) {
     rowCount: PropTypes.number.isRequired,
   };
 
-  function EnhancedTableToolbar(props) {
-    // const { numSelected } = props;
-
+  function EnhancedTableToolbar() {
     const handleInputChange = (event) => {
       setInputValue(event.target.value);
     };
@@ -205,15 +197,7 @@ export default function ProductsTable(props) {
     };
 
     return (
-      <Toolbar
-      //     sx={{
-      //       pl: { sm: 2 },
-      //       pr: { xs: 1, sm: 1 },
-      //       ...(numSelected > 0 && {
-      //         bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-      //       }),
-      //     }}
-      >
+      <Toolbar>
         {
           <>
             {isAdding && (
@@ -329,23 +313,51 @@ export default function ProductsTable(props) {
     setOpen(null);
   };
 
+  const handleEdit = () => {
+    setOpen(null);
+    console.log('old', name);
+    console.log('new', editedName);
+    EditName();
+  };
+
+  const handleCloseEdit = () => {
+    setIsEditing(false);
+    setOpen(null);
+    setEditedName('');
+  };
+
   const EditName = () => {
-    console.log('EditName', name);
+    // const confirmUpdate = window.confirm(`האם את בטוחה? \nיתכן וישתנו פריטים לצמיתות`);
+
+    // if (confirmUpdate) {
+    if (editedName !== '') {
+      axios
+        .put(`${props.updateApi}${name}&New${props.columnName}Name=${editedName}`)
+
+        .then((res) => {
+          setIsEditing(false);
+          GetList();
+          alert(`${name} was update successfully to ${editedName}.`);
+          setEditedName('');
+        })
+        .catch((err) => {
+          console.log('EditName error', err);
+        });
+      // }
+    } else {
+      alert('אנא ודאי שמילאת פרטים עדכניים');
+    }
   };
 
   const DeleteName = () => {
-    console.log('DeleteName', name);
-    console.log('api', props.deleteApi + name);
-
     const confirmDelete = window.confirm(`האם את בטוחה? \nיתכן וימחקו פריטים לצמיתות`);
 
     if (confirmDelete) {
       axios
         .delete(props.deleteApi + name)
         .then((res) => {
-          alert(`${name} was deleted successfully.`);
-          console.log(res);
           GetList();
+          alert(`${name} was deleted successfully.`);
         })
         .catch((err) => {
           console.log('DeleteName error', err);
@@ -355,8 +367,8 @@ export default function ProductsTable(props) {
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', width: '50%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+      <Paper sx={{ width: '50%', mb: 2 }}>
         <TableContainer>
           {/* search bar + add icon */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -381,38 +393,16 @@ export default function ProductsTable(props) {
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.name);
-                const labelId = `enhanced-table-checkbox-${index}`;
-
                 return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.name)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.name}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell align="right">
+                  <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
+                    <TableCell align="left">
                       <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
                         <Iconify icon={'eva:more-vertical-fill'} />
                       </IconButton>
                     </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.name}
-                    </TableCell>
 
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      />
-                    </TableCell>
+                    {/* <TableCell component="th" id={labelId} scope="row" padding="none"> */}
+                    <TableCell padding="none">{row.name}</TableCell>
                   </TableRow>
                 );
               })}
@@ -462,7 +452,7 @@ export default function ProductsTable(props) {
             sx={{
               color: 'success.main',
             }}
-            onClick={() => EditName(name)}
+            onClick={() => setIsEditing(true)}
           >
             <Iconify icon={'carbon:edit'} sx={{ mr: 2 }} color={'success.main'} />
             {'עריכה '}
@@ -478,6 +468,50 @@ export default function ProductsTable(props) {
             {'מחיקה '}
           </MenuItem>
         </Popover>
+
+        <Modal
+          open={isEditing}
+          onClose={() => setIsEditing(false)}
+          aria-labelledby="modal-title"
+          aria-describedby="modal-description"
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              boxShadow: 24,
+              p: 4,
+              width: '300px',
+              textAlign: 'center',
+            }}
+          >
+            <h2 id="modal-title">עריכה</h2>
+            <TextField
+              label="שם"
+              defaultValue={name}
+              onChange={(event) => setEditedName(event.target.value)}
+              fullWidth
+            />
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                mt: 2,
+              }}
+            >
+              <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCloseEdit}>
+                ביטול
+              </Button>
+              <Button variant="contained" sx={{ bgcolor: 'green' }} onClick={handleEdit}>
+                שמירה
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
       </Paper>
     </Box>
   );
