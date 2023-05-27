@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,7 +11,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
@@ -39,6 +37,7 @@ export default function ProductsTable(props) {
   // search
   const [filterName, setFilterName] = useState('');
 
+  //   edit modal
   const [open, setOpen] = useState(null);
   const [name, setName] = useState(null);
 
@@ -76,7 +75,6 @@ export default function ProductsTable(props) {
         }
       );
   };
-
   const handlePostClick = () => {
     if (inputValue === '') {
       alert('אנא מלאי את השדות הנדרשים');
@@ -188,7 +186,7 @@ export default function ProductsTable(props) {
     rowCount: PropTypes.number.isRequired,
   };
 
-  function EnhancedTableToolbar(props) {
+  function EnhancedTableToolbar() {
     // const { numSelected } = props;
 
     const handleInputChange = (event) => {
@@ -334,18 +332,14 @@ export default function ProductsTable(props) {
   };
 
   const DeleteName = () => {
-    console.log('DeleteName', name);
-    console.log('api', props.deleteApi + name);
-
     const confirmDelete = window.confirm(`האם את בטוחה? \nיתכן וימחקו פריטים לצמיתות`);
 
     if (confirmDelete) {
       axios
         .delete(props.deleteApi + name)
         .then((res) => {
-          alert(`${name} was deleted successfully.`);
-          console.log(res);
           GetList();
+          alert(`${name} was deleted successfully.`);
         })
         .catch((err) => {
           console.log('DeleteName error', err);
