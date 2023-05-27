@@ -80,7 +80,7 @@ function applySortFilter(array, comparator, query) {
 
 const MapPage = (props) => {
   const mapStyles = {
-    width: 900,
+    width: "100%",
     height: 300,
   };
 

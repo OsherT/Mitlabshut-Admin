@@ -38,7 +38,7 @@ export default function LanguagePopover() {
 
   return (
     <>
-      <IconButton
+      {/* <IconButton
         onClick={handleOpen}
         sx={{
           padding: 0,
@@ -81,7 +81,7 @@ export default function LanguagePopover() {
             </MenuItem>
           ))}
         </Stack>
-      </Popover>
+      </Popover> */}
     </>
   );
 }
