@@ -25,12 +25,16 @@ import {
   TablePagination,
 } from '@mui/material';
 // components
+import { Icon } from '@iconify/react';
+import Tooltip from '@mui/material/Tooltip';
+
 import Label from '../components/label';
+
 import Iconify from '../components/iconify';
+
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-// mock
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +44,7 @@ const TABLE_HEAD = [
   { id: 'age', label: 'גיל', alignRight: true },
   { id: 'phoneNumber', label: 'מספר טלפון', alignRight: true },
   { id: 'userStatus', label: 'סטטוס', alignRight: true },
+  { id: 'isAdmin', label: '', alignRight: true },
   { id: '' },
 ];
 // ----------------------------------------------------------------------
@@ -76,7 +81,6 @@ function applySortFilter(array, comparator, query) {
 export default function UserPage() {
   useEffect(() => {
     getUserList();
-    console.log(userList); //
   }, []);
   const [open, setOpen] = useState(null);
 
@@ -93,12 +97,19 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [userList, setuserList] = useState([]);
+
   const [status, setstatus] = useState('');
-  const [userID, setuserID] = useState("");
-  const handleOpenMenu = (event, status,id) => {
+
+  const [userID, setuserID] = useState('');
+
+  const [isAdmin, setisAdmin] = useState("")
+
+  const handleOpenMenu = (event, status, id,isAdmin) => {
     setOpen(event.currentTarget);
     setstatus(status);
     setuserID(id);
+    console.log(isAdmin);
+    setisAdmin(isAdmin);
   };
 
   const handleCloseMenu = () => {
@@ -158,7 +169,6 @@ export default function UserPage() {
     axios
       .get(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/GetUser`)
       .then((res) => {
-        console.log(res.data);
         const transformedData = res.data.map((user) => {
           return {
             fullName: user.full_name,
@@ -168,18 +178,38 @@ export default function UserPage() {
             status: user.user_Status,
             id: user.id,
             userImage: user.user_image,
+            isAdmin: user.is_admin,
           };
         });
         setuserList(transformedData);
-        console.log(transformedData);
       })
       .catch((err) => {
         console.log('err in getUserList', err);
       });
   }
-  // function BlockOrActiveUser() {
-    
-  // }
+  const BlockOrActiveUser = () => {
+    axios
+      .put(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/PutUserStatus?UserID=${userID}`)
+      .then((res) => {
+        setOpen(null);
+        getUserList();
+      })
+      .catch((err) => {
+        console.log('err in BlockOrActiveUser', err);
+      });
+  };
+
+  const ChangeIsAdmin = () => {
+    axios
+      .put(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/PutUserAdminFiled?UserID=${userID}`)
+      .then((res) => {
+        setOpen(null);
+        getUserList();
+      })
+      .catch((err) => {
+        console.log('err in ChangeIsAdmin', err);
+      });
+  };
   return (
     <>
       <Helmet>
@@ -213,7 +243,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, fullName, email, status, phoneNumber, userImage, age } = row;
+                    const { id, fullName, email, status, phoneNumber, userImage, age,isAdmin } = row;
                     const selectedUser = selected.indexOf(fullName) !== -1;
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
@@ -240,10 +270,19 @@ export default function UserPage() {
                           </Label>
                         </TableCell>
                         <TableCell align="right">
+                          {isAdmin && (
+                            <Tooltip title="מנהלת">
+                            <IconButton size="large" color="inherit">
+                              <Icon icon="material-symbols:admin-panel-settings-outline" color="#d7ba7b" />
+                            </IconButton>
+                          </Tooltip>
+                          )}
+                        </TableCell>
+                        <TableCell align="right">
                           <IconButton
                             size="large"
                             color="inherit"
-                            onClick={(event) => handleOpenMenu(event, row.status,row.id)}
+                            onClick={(event) => handleOpenMenu(event, row.status, row.id,row.isAdmin)}
                           >
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
@@ -272,9 +311,8 @@ export default function UserPage() {
                           </Typography>
 
                           <Typography variant="body2">
-                          לא נמצאה משתמשת העונה לשם&nbsp;
-                          
-                           <strong>{filterName}</strong>
+                            לא נמצאה משתמשת העונה לשם&nbsp;
+                            <strong>{filterName}</strong>
                           </Typography>
                         </Paper>
                       </TableCell>
@@ -294,8 +332,6 @@ export default function UserPage() {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             labelRowsPerPage="שורות לעמוד"
-            
-
           />
         </Card>
       </Container>
@@ -322,7 +358,7 @@ export default function UserPage() {
           sx={{
             color: status === 'non active' ? 'success.main' : 'error.main',
           }}
-          // onClick={BlockOrActiveUser}
+          onClick={BlockOrActiveUser}
         >
           <Iconify
             icon={status === 'non active' ? 'system-uicons:user-add' : 'system-uicons:no-sign'}
@@ -330,6 +366,19 @@ export default function UserPage() {
             color={status === 'non active' ? 'success.main' : 'error.main'}
           />
           {status === 'non active' ? 'החזירי לפעילות ' : 'חסמי חשבון'}
+        </MenuItem>
+        <MenuItem
+          sx={{
+            color: isAdmin === false  ? 'success.main' : 'error.main',
+          }}
+          onClick={ChangeIsAdmin}
+        >
+          <Iconify
+            icon={isAdmin === false ? 'subway:admin-1' : 'subway:admin-2'}
+            sx={{ mr: 2 }}
+            color={isAdmin === false ? 'success.main' : 'error.main'}
+          />
+          {isAdmin === false ? ' הוסיפי כמנהלת' : 'הסירי כמנהלת '}
         </MenuItem>
       </Popover>
     </>
