@@ -39,6 +39,7 @@ export default function ProductsTable(props) {
   //  modal
   const [open, setOpen] = useState(null);
   const [name, setName] = useState(null);
+  const [sentenceID, setSentenceID] = useState(null);
 
   // edit modal
   const [isEditing, setIsEditing] = useState(false);
@@ -73,7 +74,6 @@ export default function ProductsTable(props) {
             setRows(data.map((item) => ({ name: item.color_name })));
           } else if (props.columnName === 'content') {
             setRows(data.map((item) => ({ id: item.id, name: item.content })));
-            console.log('row', rows);
           }
         },
         (error) => {
@@ -90,7 +90,7 @@ export default function ProductsTable(props) {
         .post(props.postApi + inputValue)
         .then((res) => {
           GetList();
-          alert('הנתון התווסף בהצלחה');
+          alert(`${inputValue} נוסף בהצלחה`);
         })
         .catch((err) => {
           console.log('err in handlePostClick', err);
@@ -199,45 +199,44 @@ export default function ProductsTable(props) {
       setIsAdding(false);
     };
 
-    return (
-      <Toolbar>
-        {
-          <>
-            {isAdding && (
-              <TextField
-                label="הקלידי..."
-                dir="rtl"
-                value={inputValue}
-                onChange={handleInputChange}
-                sx={{ flex: '1 1 100%', direction: 'rtl' }}
-              />
-            )}
+return (
+  <Toolbar>
+    {isAdding && (
+      <TextField
+        label="הקלידי..."
+        dir="rtl"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        sx={{ flex: '1 1 100%', direction: 'rtl' }}
+        autoFocus // Add this line to auto-focus the input field
+      />
+    )}
 
-            {isAdding ? (
-              <>
-                <Tooltip title="הוסיפי">
-                  <IconButton onClick={handlePostClick}>
-                    <Iconify icon={'eva:checkmark-outline'} sx={{ mr: 2 }} />
-                  </IconButton>
-                </Tooltip>
+    {isAdding ? (
+      <>
+        <Tooltip title="הוסיפי">
+          <IconButton onClick={handlePostClick}>
+            <Iconify icon={'eva:checkmark-outline'} sx={{ mr: 2 }} />
+          </IconButton>
+        </Tooltip>
 
-                <Tooltip title="ביטול">
-                  <IconButton onClick={handleCancleClick}>
-                    <Iconify icon={'carbon:close'} sx={{ mr: 2 }} />
-                  </IconButton>
-                </Tooltip>
-              </>
-            ) : (
-              <Tooltip title="הוספה">
-                <IconButton onClick={handleAddClick}>
-                  <Iconify icon={'gala:add'} sx={{ mr: 2 }} />
-                </IconButton>
-              </Tooltip>
-            )}
-          </>
-        }
-      </Toolbar>
-    );
+        <Tooltip title="ביטול">
+          <IconButton onClick={handleCancleClick}>
+            <Iconify icon={'carbon:close'} sx={{ mr: 2 }} />
+          </IconButton>
+        </Tooltip>
+      </>
+    ) : (
+      <Tooltip title="הוספה">
+        <IconButton onClick={handleAddClick}>
+          <Iconify icon={'gala:add'} sx={{ mr: 2 }} />
+        </IconButton>
+      </Tooltip>
+    )}
+  </Toolbar>
+);
+
+
   }
 
   EnhancedTableToolbar.propTypes = {
@@ -293,14 +292,17 @@ export default function ProductsTable(props) {
     setName(name);
   };
 
+  const handleOpenMenuSentens = (event, name, id) => {
+    setOpen(event.currentTarget);
+    setName(name);
+    setSentenceID(id);
+  };
   const handleCloseMenu = () => {
     setOpen(null);
   };
 
   const handleEdit = () => {
     setOpen(null);
-    console.log('old', name);
-    console.log('new', editedName);
     EditName();
   };
 
@@ -317,11 +319,10 @@ export default function ProductsTable(props) {
     if (editedName !== '') {
       axios
         .put(`${props.updateApi}${name}&New${props.columnName}Name=${editedName}`)
-
         .then((res) => {
           setIsEditing(false);
           GetList();
-          alert(`${name} was update successfully to ${editedName}.`);
+          alert(`${name} הנתון התעדכן בהצלחה ${editedName}.`);
           setEditedName('');
         })
         .catch((err) => {
@@ -335,13 +336,13 @@ export default function ProductsTable(props) {
 
   const DeleteName = () => {
     const confirmDelete = window.confirm(`האם את בטוחה? \nיתכן וימחקו פריטים לצמיתות`);
-    console.log('name', name);
+
     if (confirmDelete) {
       axios
-        .delete(props.deleteApi + name)
+        .delete(props.columnName === 'content' ? props.deleteApi + sentenceID : props.deleteApi + name)
         .then((res) => {
           GetList();
-          alert(`${name} was deleted successfully.`);
+          alert(`${name} נמחק בהצלחה`);
         })
         .catch((err) => {
           console.log('DeleteName error', err);
@@ -385,7 +386,11 @@ export default function ProductsTable(props) {
                           <Iconify icon={'eva:more-vertical-fill'} />
                         </IconButton>
                       ) : (
-                        <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.id)}>
+                        <IconButton
+                          size="large"
+                          color="inherit"
+                          onClick={(event) => handleOpenMenuSentens(event, row.name, row.id)}
+                        >
                           <Iconify icon={'eva:more-vertical-fill'} />
                         </IconButton>
                       )}
