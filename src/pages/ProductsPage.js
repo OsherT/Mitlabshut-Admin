@@ -1,6 +1,7 @@
 import React from 'react';
-import { Divider } from '@mui/material';
+import { Divider, Button } from '@mui/material';
 import ProductsTable from '../components/ProductsTable';
+// import firebase from '../../firebaseConfig'
 
 export default function ProductsPage() {
   // Brand
@@ -41,8 +42,27 @@ export default function ProductsPage() {
   const colorUpdateApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemColor?OldColorName=`;
   const colorColumnName = 'color';
 
+  const handleUpload = (event) => {
+    // const file = event.target.files[0];
+    // const storageRef = firebase.storage().ref();
+    // const imagesRef = storageRef.child(`AppImages/${file.name}`);
+    // imagesRef
+    //   .put(file)
+    //   .then(() => {
+    //     console.log('Image uploaded successfully');
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error uploading image:', error);
+    //   });
+  };
+
   return (
     <div>
+      {/* <input type="file" id="imageInput" style={{ display: 'none' }} onChange={this.handleUpload} /> */}
+      <Button variant="contained" onClick={handleUpload}>
+        העלי תמונה
+      </Button>
+
       <div style={{ display: 'flex' }}>
         <div>
           <ProductsTable
@@ -104,6 +124,11 @@ export default function ProductsPage() {
           />
         </div>
       </div>
+      <Divider sx={{ my: 10, border: 1, borderBlockColor: 'lightgray' }}>
+        {/* 
+               
+            */}
+      </Divider>
     </div>
   );
 }
