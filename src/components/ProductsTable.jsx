@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { ChromePicker } from 'react-color';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -16,8 +17,8 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
-
 import axios from 'axios';
+import swal from 'sweetalert';
 import { TextField, Popover, MenuItem, Modal, Button } from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
 import firebase, { storage } from '../firebaseConfig';
@@ -67,6 +68,11 @@ export default function ProductsTable(props) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageLink, setImageLink] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  const [typeImageModal, settypeImageModal] = useState(false);
+  const [chosenPhoto, setchosenPhoto] = useState('');
+  const [chosenPhotoName, setchosenPhotoName] = useState('');
+  const [selectedColor, setSelectedColor] = useState('#ffffff');
 
   useEffect(() => {
     GetList();
@@ -275,7 +281,7 @@ export default function ProductsTable(props) {
     if (name === 'type') {
       setIsAddingType(true);
     } else if (name === 'color') {
-      alert(name);
+      setOpenColorModal(true);
     } else {
       setIsAdding(true);
     }
@@ -414,6 +420,11 @@ export default function ProductsTable(props) {
     setOpen(null);
     EditName();
   };
+  const handleImageClicked = (url, name) => {
+    settypeImageModal(true);
+    setchosenPhoto(url);
+    setchosenPhotoName(name);
+  };
 
   const EditName = () => {
     // const confirmUpdate = window.confirm(`האם את בטוחה? \nיתכן וישתנו פריטים לצמיתות`);
@@ -453,7 +464,22 @@ export default function ProductsTable(props) {
     }
     setOpen(null);
   };
+  const AddColor = () => {
+    const encodedColorCode = encodeURIComponent(selectedColor);
 
+    axios
+        .post(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostColor?item_color=${inputValue}&color=${encodedColorCode}`)
+        .then((res) => {
+          GetList();
+          swal('!הצבע נוסף', `הצבע ${inputValue} נוסף בהצלחה ` , 'success');
+          handleCancelClick();
+
+        })
+        .catch((err) => {
+          console.log('err in AddColor', err);
+        });
+
+  };
   return (
     <Card>
       <Box sx={{ width: 'auto' }}>
@@ -509,34 +535,34 @@ export default function ProductsTable(props) {
                               backgroundColor: row.color,
                               display: 'inline-block',
                               verticalAlign: 'middle',
+                              borderRadius: '30%',
+                              boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
                             }}
                           />
                         </TableCell>
                       )}
                       {props.columnName === 'type' && (
                         <TableCell padding="none">
-                          <img
-                            src={row.image}
-                            alt={row.name}
+                          <Button
+                            className="hvr-grow"
                             style={{
-                              width: '77px',
-                              height: '77px',
-                              transition: 'transform 0.3s',
+                              border: 'none',
+                              padding: 0,
+                              background: 'none',
+                              cursor: 'pointer',
                             }}
-                            onMouseOver={(e) => {
-                              e.target.style.transform = 'scale(1.7)';
-                            }}
-                            onMouseOut={(e) => {
-                              e.target.style.transform = 'scale(1)';
-                            }}
-                            onFocus={(e) => {
-                              e.target.style.transform = 'scale(1.7)';
-
-                            }}
-                            onBlur={(e) => {
-                              e.target.style.transform = 'scale(1)';
-                            }}
-                          />
+                            onClick={() => handleImageClicked(row.image, row.name)}
+                          >
+                            <img
+                              src={row.image}
+                              alt={row.name}
+                              style={{
+                                width: '77px',
+                                height: '77px',
+                                borderRadius: '10%',
+                              }}
+                            />
+                          </Button>
                         </TableCell>
                       )}
                     </TableRow>
@@ -554,7 +580,6 @@ export default function ProductsTable(props) {
               </TableBody>
             </Table>
           </TableContainer>
-
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -565,7 +590,6 @@ export default function ProductsTable(props) {
             onRowsPerPageChange={handleChangeRowsPerPage}
             labelRowsPerPage="שורות לעמוד"
           />
-
           <Popover
             open={Boolean(open)}
             anchorEl={open}
@@ -604,7 +628,6 @@ export default function ProductsTable(props) {
               {'מחיקה '}
             </MenuItem>
           </Popover>
-
           <Modal
             open={isEditing}
             onClose={() => setIsEditing(false)}
@@ -648,7 +671,7 @@ export default function ProductsTable(props) {
               </Box>
             </Box>
           </Modal>
-
+          {/* מודל הוספת סוג פריט */}
           <Modal
             open={isAddingType}
             onClose={() => setIsAddingType(false)}
@@ -764,6 +787,128 @@ export default function ProductsTable(props) {
               </Box>
             </Box>
           </Modal>
+          {/* /// */}
+          {/* מודל הוספת צבע */}
+          <Modal
+            open={openColorModal}
+            onClose={() => setOpenColorModal(false)}
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'background.paper',
+                border: '2px solid #000',
+                boxShadow: 24,
+                p: 4,
+                width: '600px',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column ',
+                gap: 1,
+              }}
+            >
+              <h2 id="modal-title">הוספת צבע</h2>
+              <TextField label="שם" onChange={(event) => setInputValue(event.target.value)} />
+              <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
+              {/* <div
+                style={{
+                  width: '75px',
+                  height: '75px',
+                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
+                  borderRadius: '10%',
+                  background: selectedColor,
+                }}
+              /> */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  gap: 1,
+                }}
+              >
+                <Button
+                  className="hvr-bob"
+                  variant="contained"
+                  sx={{
+                    bgcolor: 'red',
+                    '&:hover': {
+                      bgcolor: 'red', // Keep the same color on hover
+                    },
+                  }}
+                  onClick={handleCancelClick}
+                >
+                  ביטול
+                </Button>
+                <Button
+                  className="hvr-bob"
+                  variant="contained"
+                  sx={{
+                    bgcolor: selectedColor,
+                    '&:hover': {
+                      bgcolor: selectedColor, // Keep the same color on hover
+                    },
+                  }}
+                  onClick={() => {
+                    if (inputValue === '' || selectedColor === '#ffffff') {
+                      alert('אנא מלאי את השדות הנדרשים');
+                    } else {
+                      AddColor();
+                    }
+                  }}
+                >
+                  שמרי
+                </Button>
+              </Box>
+            </Box>
+          </Modal>
+          {/* /// */}
+          \\
+          {/* מודל הצגת תמונת סוג פריט */}
+          <Modal
+            open={typeImageModal}
+            onClose={() => settypeImageModal(false)}
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                display: 'flex',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'background.paper',
+                border: '2px solid #000',
+                boxShadow: 24,
+                p: 4,
+                width: '300px',
+                textAlign: 'center',
+                alignItems: 'center',
+                flexDirection: 'column ',
+              }}
+            >
+              <h2 id="modal-title">{chosenPhotoName}</h2>
+              <img
+                src={chosenPhoto}
+                alt={chosenPhotoName}
+                style={{
+                  maxWidth: '80%',
+                  maxHeight: '80%',
+                  borderRadius: '10%',
+                }}
+              />
+              <Button style={{ marginTop: 40 }} onClick={() => settypeImageModal(false)}>
+                <Iconify icon={'ph:x-thin'} />
+              </Button>
+            </Box>
+          </Modal>
+          {/* /// */}
         </Paper>
       </Box>
     </Card>
