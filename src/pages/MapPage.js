@@ -364,7 +364,7 @@ const MapPage = (props) => {
       </Helmet>
       <div style={{ position: 'relative', height: '400px' }}>
         <div style={{ textAlign: 'left', margin: '10px', marginBottom: '20px' }}>
-          <Button variant="outlined" onClick={handleClickOpenForm}>
+          <Button className="hvr-glow" variant="outlined" onClick={handleClickOpenForm}>
             <Icon icon="system-uicons:plus" width="20" height="20" />
             הוסיפי חנות חדשה
           </Button>
@@ -686,8 +686,8 @@ const MapPage = (props) => {
             </>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseForm}>ביטול</Button>
-            <Button onClick={handleAdd}>{editFlag === true ? 'עדכון' : 'הוספה '}</Button>
+            <Button variant="outlined" className="hvr-bob"onClick={handleCloseForm}>ביטול</Button>
+            <Button variant="contained" className="hvr-bob"onClick={handleAdd}>{editFlag === true ? 'עדכון' : 'הוספה '}</Button>
           </DialogActions>
         </Box>
       </Dialog>{' '}

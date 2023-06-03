@@ -75,17 +75,17 @@ export default function Nav({ openNav, onCloseNav }) {
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
                 {loggedAdmin.full_name}
               </Typography>
-
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
-              </Typography>
             </Box>
           </StyledAccount>
         </Link>
-        <Button onClick={handleLogout}>logout</Button>
       </Box>
 
       <NavSection data={navConfig} />
+      <div style={{ display: 'flex', alignSelf: 'center' }}>
+        <Button variant="outlined" className="hvr-glow" onClick={handleLogout}>
+          התנתקי
+        </Button>
+      </div>
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>

@@ -48,7 +48,6 @@ export default function LoginForm() {
           },
         });
         const user = await response.json();
-        console.log(user);
 
         if (user.user_Status === 'non active') {
           swal('!שגיאה', 'משתמש זה לא פעיל במערכת', 'error');
@@ -63,7 +62,7 @@ export default function LoginForm() {
           setUserPassword('');
         } else if (user.id > 0) {
           setLoggedAdmin(user);
-          // navigate('MainLayout');
+          localStorage.setItem('loggedAdmin', JSON.stringify(user));
           navigate('/dashboard', { replace: true });
         } else {
           swal('!שגיאה', 'משתמש זה לא קיים במערכת', 'error');
