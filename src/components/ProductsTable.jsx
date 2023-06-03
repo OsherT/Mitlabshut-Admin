@@ -51,9 +51,10 @@ export default function ProductsTable(props) {
 
   // type modal
   const [isEditingType, setIsEditingType] = useState(false);
-  const [typeName, setTypeName] = useState('');
   const [openTypeModal, setOpenTypeModal] = useState(null);
   const [isAddingType, setIsAddingType] = useState(false);
+  const [typeImage, setTypeImage] = useState('');
+  // const [newTypeImage, setNewTypeImage] = useState(false);
 
   // color modal
   const [isEditingColor, setIsEditingColor] = useState(false);
@@ -110,7 +111,7 @@ export default function ProductsTable(props) {
         }
       );
   };
-// hvhdcjbcfv
+  // hvhdcjbcfv
   const handlePostClick = () => {
     if (inputValue === '') {
       alert('אנא מלאי את השדות הנדרשים');
@@ -412,6 +413,13 @@ export default function ProductsTable(props) {
     setName(name);
     setSentenceID(id);
   };
+
+  const handleOpenMenuType = (event, name, image) => {
+    setOpen(event.currentTarget);
+    setName(name);
+    setSelectedFile(image);
+  };
+
   const handleCloseMenu = () => {
     setOpen(null);
   };
@@ -420,6 +428,27 @@ export default function ProductsTable(props) {
     setOpen(null);
     EditName();
   };
+
+    const handleEditType = () => {
+      //  need first to upload to FB and after to DB
+
+      axios
+        .put(
+          `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemType?OldTypeName=${name}&NewTypeName=${editedName}&TypePic=${selectedFile}`
+        )
+        .then((res) => {
+          console.log('res', res);
+          alert(`${name} התעדכן בהצלחה`);
+          GetList();
+        })
+        .catch((err) => {
+          alert('err in handleEditType', err);
+        });
+      setEditedName('');
+      setIsAdding(false);
+    };
+
+
   const handleImageClicked = (url, name) => {
     settypeImageModal(true);
     setchosenPhoto(url);
@@ -468,17 +497,17 @@ export default function ProductsTable(props) {
     const encodedColorCode = encodeURIComponent(selectedColor);
 
     axios
-        .post(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostColor?item_color=${inputValue}&color=${encodedColorCode}`)
-        .then((res) => {
-          GetList();
-          swal('!הצבע נוסף', `הצבע ${inputValue} נוסף בהצלחה ` , 'success');
-          handleCancelClick();
-
-        })
-        .catch((err) => {
-          console.log('err in AddColor', err);
-        });
-
+      .post(
+        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostColor?item_color=${inputValue}&color=${encodedColorCode}`
+      )
+      .then((res) => {
+        GetList();
+        swal('!הצבע נוסף', `הצבע ${inputValue} נוסף בהצלחה `, 'success');
+        handleCancelClick();
+      })
+      .catch((err) => {
+        console.log('err in AddColor', err);
+      });
   };
   return (
     <Card>
@@ -788,6 +817,9 @@ export default function ProductsTable(props) {
             </Box>
           </Modal>
           {/* /// */}
+
+
+          
           {/* מודל הוספת צבע */}
           <Modal
             open={openColorModal}
@@ -868,7 +900,7 @@ export default function ProductsTable(props) {
             </Box>
           </Modal>
           {/* /// */}
-          \\
+          
           {/* מודל הצגת תמונת סוג פריט */}
           <Modal
             open={typeImageModal}
