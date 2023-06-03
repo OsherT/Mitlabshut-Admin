@@ -111,7 +111,7 @@ export default function ProductsTable(props) {
         }
       );
   };
-  // hvhdcjbcfv
+
   const handlePostClick = () => {
     if (inputValue === '') {
       alert('אנא מלאי את השדות הנדרשים');
@@ -185,6 +185,32 @@ export default function ProductsTable(props) {
     setImageLink('');
     handleCancelClick();
   };
+
+  const handleOpenMenuType = (event, name, image) => {
+    setOpen(event.currentTarget);
+    setName(name);
+    setSelectedFile(image);
+  };
+
+  const handleEditType = () => {
+    //  need first to upload to FB and after to DB
+
+    axios
+      .put(
+        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemType?OldTypeName=${name}&NewTypeName=${editedName}&TypePic=${selectedFile}`
+      )
+      .then((res) => {
+        console.log('res', res);
+        alert(`${name} התעדכן בהצלחה`);
+        GetList();
+      })
+      .catch((err) => {
+        alert('err in handleEditType', err);
+      });
+    setEditedName('');
+    setIsAdding(false);
+  };
+
 
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -282,7 +308,7 @@ export default function ProductsTable(props) {
     if (name === 'type') {
       setIsAddingType(true);
     } else if (name === 'color') {
-      setOpenColorModal(true);
+      alert(name);
     } else {
       setIsAdding(true);
     }
@@ -300,8 +326,6 @@ export default function ProductsTable(props) {
     setOpen(null);
     setEditedName('');
 
-    setSelectedFile(null);
-    setIsEditingType(false);
     setSelectedFile(null);
   };
 
@@ -415,13 +439,6 @@ export default function ProductsTable(props) {
     setName(name);
     setSentenceID(id);
   };
-
-  const handleOpenMenuType = (event, name, image) => {
-    setOpen(event.currentTarget);
-    setName(name);
-    setSelectedFile(image);
-  };
-
   const handleCloseMenu = () => {
     setOpen(null);
   };
@@ -429,31 +446,6 @@ export default function ProductsTable(props) {
   const handleEdit = () => {
     setOpen(null);
     EditName();
-  };
-
-  const handleEditType = () => {
-    //  need first to upload to FB and after to DB
-    axios
-      .put(
-        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemType?OldTypeName=${name}&NewTypeName=${editedName}&TypePic=${selectedFile}`
-      )
-      .then((res) => {
-        console.log('res', res);
-        alert(`${name} התעדכן בהצלחה ל-${editedName}`);
-        GetList();
-      })
-      .catch((err) => {
-        alert('err in handleEditType', err);
-      });
-    setEditedName('');
-    setIsAdding(false);
-    handleCancelClick();
-  };
-
-  const handleImageClicked = (url, name) => {
-    settypeImageModal(true);
-    setchosenPhoto(url);
-    setchosenPhotoName(name);
   };
 
   const EditName = () => {
@@ -494,22 +486,7 @@ export default function ProductsTable(props) {
     }
     setOpen(null);
   };
-  const AddColor = () => {
-    const encodedColorCode = encodeURIComponent(selectedColor);
 
-    axios
-      .post(
-        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostColor?item_color=${inputValue}&color=${encodedColorCode}`
-      )
-      .then((res) => {
-        GetList();
-        swal('!הצבע נוסף', `הצבע ${inputValue} נוסף בהצלחה `, 'success');
-        handleCancelClick();
-      })
-      .catch((err) => {
-        console.log('err in AddColor', err);
-      });
-  };
   return (
     <Card>
       <Box sx={{ width: 'auto' }}>
@@ -555,7 +532,6 @@ export default function ProductsTable(props) {
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         )}
-
                         {props.columnName === 'type' && (
                           <IconButton
                             size="large"
@@ -584,26 +560,27 @@ export default function ProductsTable(props) {
                       )}
                       {props.columnName === 'type' && (
                         <TableCell padding="none">
-                          <Button
-                            className="hvr-grow"
+                          <img
+                            src={row.image}
+                            alt={row.name}
                             style={{
-                              border: 'none',
-                              padding: 0,
-                              background: 'none',
-                              cursor: 'pointer',
+                              width: '77px',
+                              height: '77px',
+                              transition: 'transform 0.3s',
                             }}
-                            onClick={() => handleImageClicked(row.image, row.name)}
-                          >
-                            <img
-                              src={row.image}
-                              alt={row.name}
-                              style={{
-                                width: '77px',
-                                height: '77px',
-                                borderRadius: '10%',
-                              }}
-                            />
-                          </Button>
+                            onMouseOver={(e) => {
+                              e.target.style.transform = 'scale(1.7)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.target.style.transform = 'scale(1)';
+                            }}
+                            onFocus={(e) => {
+                              e.target.style.transform = 'scale(1.7)';
+                            }}
+                            onBlur={(e) => {
+                              e.target.style.transform = 'scale(1)';
+                            }}
+                          />
                         </TableCell>
                       )}
                     </TableRow>
@@ -718,6 +695,7 @@ export default function ProductsTable(props) {
               </Box>
             </Box>
           </Modal>
+
           {/* מודל הוספת סוג פריט */}
           <Modal
             open={isAddingType}
@@ -840,214 +818,6 @@ export default function ProductsTable(props) {
               </Box>
             </Box>
           </Modal>
-          {/* /// */}
-
-          {/* מודל עדכון סוג פריט */}
-          <Modal
-            open={isEditingType}
-            onClose={() => setIsEditingType(false)}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-                width: '400px',
-                textAlign: 'center',
-              }}
-            >
-              <h2 id="modal-title">עדכון סוג פריט</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <TextField
-                  label="שם"
-                  defaultValue={name}
-                  onChange={(event) => setEditedName(event.target.value)}
-                  style={{ width: '200px' }}
-                />
-                <Button
-                  component="label"
-                  htmlFor="file-upload"
-                  className="custom-file-upload"
-                  style={{ backgroundColor: 'gray', color: 'white', marginTop: 30 }}
-                >
-                  החליפי תמונה
-                  <input id="file-upload" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
-                </Button>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '200px',
-                  marginTop: '20px',
-                }}
-              >
-                <img
-                  src={selectedFile}
-                  alt="התמונה שנבחרה"
-                  style={{
-                    width: '200px',
-                    height: '200px',
-                    display: 'block',
-                  }}
-                />
-              </div>
-
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  mt: 5,
-                }}
-              >
-                <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCancelClick}>
-                  ביטול
-                </Button>
-
-                <Button
-                  variant="contained"
-                  sx={{ bgcolor: 'green' }}
-                  onClick={() => {
-                    handleEditType();
-                  }}
-                >
-                  שמרי
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
-          {/* /// */}
-
-          {/* מודל הוספת צבע */}
-          <Modal
-            open={openColorModal}
-            onClose={() => setOpenColorModal(false)}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-                width: '600px',
-                textAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                flexDirection: 'column ',
-                gap: 1,
-              }}
-            >
-              <h2 id="modal-title">הוספת צבע</h2>
-              <TextField label="שם" onChange={(event) => setInputValue(event.target.value)} />
-              <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-              {/* <div
-                style={{
-                  width: '75px',
-                  height: '75px',
-                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
-                  borderRadius: '10%',
-                  background: selectedColor,
-                }}
-              /> */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  gap: 1,
-                }}
-              >
-                <Button
-                  className="hvr-bob"
-                  variant="contained"
-                  sx={{
-                    bgcolor: 'red',
-                    '&:hover': {
-                      bgcolor: 'red', // Keep the same color on hover
-                    },
-                  }}
-                  onClick={handleCancelClick}
-                >
-                  ביטול
-                </Button>
-                <Button
-                  className="hvr-bob"
-                  variant="contained"
-                  sx={{
-                    bgcolor: selectedColor,
-                    '&:hover': {
-                      bgcolor: selectedColor, // Keep the same color on hover
-                    },
-                  }}
-                  onClick={() => {
-                    if (inputValue === '' || selectedColor === '#ffffff') {
-                      alert('אנא מלאי את השדות הנדרשים');
-                    } else {
-                      AddColor();
-                    }
-                  }}
-                >
-                  שמרי
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
-          {/* /// */}
-
-          {/* מודל הצגת תמונת סוג פריט */}
-          <Modal
-            open={typeImageModal}
-            onClose={() => settypeImageModal(false)}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                display: 'flex',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-                width: '300px',
-                textAlign: 'center',
-                alignItems: 'center',
-                flexDirection: 'column ',
-              }}
-            >
-              <h2 id="modal-title">{chosenPhotoName}</h2>
-              <img
-                src={chosenPhoto}
-                alt={chosenPhotoName}
-                style={{
-                  maxWidth: '80%',
-                  maxHeight: '80%',
-                  borderRadius: '10%',
-                }}
-              />
-              <Button style={{ marginTop: 40 }} onClick={() => settypeImageModal(false)}>
-                <Iconify icon={'ph:x-thin'} />
-              </Button>
-            </Box>
-          </Modal>
-          {/* /// */}
         </Paper>
       </Box>
     </Card>
