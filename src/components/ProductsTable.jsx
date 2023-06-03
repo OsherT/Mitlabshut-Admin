@@ -37,7 +37,7 @@ export default function ProductsTable(props) {
   // search
   const [filterName, setFilterName] = useState('');
 
-  //  modal
+  //  input modal
   const [open, setOpen] = useState(null);
   const [name, setName] = useState(null);
   const [sentenceID, setSentenceID] = useState(null);
@@ -45,6 +45,16 @@ export default function ProductsTable(props) {
   // edit modal
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState('');
+
+  // type modal
+  const [isEditingType, setIsEditingType] = useState(false);
+  const [typeName, setTypeName] = useState('');
+  const [openTypeModal, setOpenTypeModal] = useState(null);
+
+  // color modal
+  const [isEditingColor, setIsEditingColor] = useState(false);
+  const [colorName, setColorName] = useState('');
+  const [openColorModal, setOpenColorModal] = useState(null);
 
   useEffect(() => {
     GetList();
