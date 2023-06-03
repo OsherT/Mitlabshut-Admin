@@ -464,6 +464,7 @@ export default function ProductsTable(props) {
     }
     setOpen(null);
   };
+  
   const AddColor = () => {
     const encodedColorCode = encodeURIComponent(selectedColor);
 
