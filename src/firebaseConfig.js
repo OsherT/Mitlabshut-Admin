@@ -4,7 +4,6 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import 'firebase/compat/storage';
 
-
 const firebaseConfig = {
   apiKey: 'AIzaSyCWjcnE8XmJq3Bci5yerkOk89F9yEn7pKM',
   authDomain: 'mitlabshut-final.firebaseapp.com',
@@ -19,7 +18,6 @@ const firebaseConfig = {
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
-export { firebase };
-// const app = initializeApp(firebaseConfig);
 
-// export { app, firebase };
+export const storage = firebase.storage();
+export default firebase;
