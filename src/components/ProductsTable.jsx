@@ -110,7 +110,7 @@ export default function ProductsTable(props) {
         }
       );
   };
-
+// hvhdcjbcfv
   const handlePostClick = () => {
     if (inputValue === '') {
       alert('אנא מלאי את השדות הנדרשים');
