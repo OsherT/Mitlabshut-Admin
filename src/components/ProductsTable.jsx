@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -134,6 +135,9 @@ export default function ProductsTable(props) {
       numeric: false,
       disablePadding: true,
       label: 'שם',
+      alignLeft: true
+      
+
     },
   ];
 
@@ -352,9 +356,10 @@ return (
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-      <Paper sx={{ width: '50%', mb: 2 }}>
-        <TableContainer>
+    <Card>
+    <Box sx={{ width: 'auto' }}>
+      <Paper >
+        <TableContainer  component={Paper} >
           {/* search bar + add icon */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {!isAdding && (
@@ -367,7 +372,7 @@ return (
             <EnhancedTableToolbar />
           </Box>
 
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
+          <Table >
             <EnhancedTableHead
               numSelected={selected.length}
               order={order}
@@ -380,7 +385,7 @@ return (
               {visibleRows.map((row, index) => {
                 return (
                   <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
-                    <TableCell align="left">
+                    <TableCell  align="left">
                       {props.columnName !== 'content' ? (
                         <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
                           <Iconify icon={'eva:more-vertical-fill'} />
@@ -509,5 +514,6 @@ return (
         </Modal>
       </Paper>
     </Box>
+    </Card>
   );
 }

@@ -63,7 +63,7 @@ export default function ProductsPage() {
         העלי תמונה
       </Button>
 
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex',justifyContent:'space-around ' }}>
         <div>
           <ProductsTable
             getApi={brandGetApi}
@@ -88,7 +88,7 @@ export default function ProductsPage() {
                
             */}
       </Divider>
-      <div style={{ display: 'flex' }}>
+      <div style={{display: 'flex',justifyContent:'space-around '}}>
         <div>
           <ProductsTable
             getApi={sizeGetApi}
@@ -113,7 +113,7 @@ export default function ProductsPage() {
                
             */}
       </Divider>
-      <div style={{ display: 'flex' }}>
+      <div style={{display: 'flex',justifyContent:'space-around '}}>
         <div>
           <ProductsTable
             getApi={colorGetApi}
