@@ -30,7 +30,7 @@ export default function ProductsTable(props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
 
-  // add new brand
+  // add new input
   const [isAdding, setIsAdding] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
@@ -135,9 +135,7 @@ export default function ProductsTable(props) {
       numeric: false,
       disablePadding: true,
       label: 'שם',
-      alignLeft: true
-      
-
+      alignLeft: true,
     },
   ];
 
@@ -194,8 +192,14 @@ export default function ProductsTable(props) {
       setInputValue(event.target.value);
     };
 
-    const handleAddClick = () => {
-      setIsAdding(true);
+    const handleAddClick = (name) => {
+      if (name === 'type') {
+        alert(name);
+      } else if (name === 'color') {
+        alert(name);
+      } else {
+        setIsAdding(true);
+      }
     };
 
     const handleCancleClick = () => {
@@ -203,44 +207,42 @@ export default function ProductsTable(props) {
       setIsAdding(false);
     };
 
-return (
-  <Toolbar>
-    {isAdding && (
-      <TextField
-        label="הקלידי..."
-        dir="rtl"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        sx={{ flex: '1 1 100%', direction: 'rtl' }}
-        autoFocus // Add this line to auto-focus the input field
-      />
-    )}
+    return (
+      <Toolbar>
+        {isAdding && (
+          <TextField
+            label="הקלידי..."
+            dir="rtl"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            sx={{ flex: '1 1 100%', direction: 'rtl' }}
+            autoFocus // Add this line to auto-focus the input field
+          />
+        )}
 
-    {isAdding ? (
-      <>
-        <Tooltip title="הוסיפי">
-          <IconButton onClick={handlePostClick}>
-            <Iconify icon={'eva:checkmark-outline'} sx={{ mr: 2 }} />
-          </IconButton>
-        </Tooltip>
+        {isAdding ? (
+          <>
+            <Tooltip title="הוסיפי">
+              <IconButton onClick={handlePostClick}>
+                <Iconify icon={'eva:checkmark-outline'} sx={{ mr: 2 }} />
+              </IconButton>
+            </Tooltip>
 
-        <Tooltip title="ביטול">
-          <IconButton onClick={handleCancleClick}>
-            <Iconify icon={'carbon:close'} sx={{ mr: 2 }} />
-          </IconButton>
-        </Tooltip>
-      </>
-    ) : (
-      <Tooltip title="הוספה">
-        <IconButton onClick={handleAddClick}>
-          <Iconify icon={'gala:add'} sx={{ mr: 2 }} />
-        </IconButton>
-      </Tooltip>
-    )}
-  </Toolbar>
-);
-
-
+            <Tooltip title="ביטול">
+              <IconButton onClick={handleCancleClick}>
+                <Iconify icon={'carbon:close'} sx={{ mr: 2 }} />
+              </IconButton>
+            </Tooltip>
+          </>
+        ) : (
+          <Tooltip title="הוספה">
+            <IconButton onClick={() => handleAddClick(props.columnName)}>
+              <Iconify icon={'gala:add'} sx={{ mr: 2 }} />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Toolbar>
+    );
   }
 
   EnhancedTableToolbar.propTypes = {
@@ -357,163 +359,163 @@ return (
 
   return (
     <Card>
-    <Box sx={{ width: 'auto' }}>
-      <Paper >
-        <TableContainer  component={Paper} >
-          {/* search bar + add icon */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {!isAdding && (
-              <UserListToolbar
-                numSelected={selected.length}
-                filterName={filterName}
-                onFilterName={handleFilterByName}
-              />
-            )}
-            <EnhancedTableToolbar />
-          </Box>
-
-          <Table >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                return (
-                  <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
-                    <TableCell  align="left">
-                      {props.columnName !== 'content' ? (
-                        <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
-                          <Iconify icon={'eva:more-vertical-fill'} />
-                        </IconButton>
-                      ) : (
-                        <IconButton
-                          size="large"
-                          color="inherit"
-                          onClick={(event) => handleOpenMenuSentens(event, row.name, row.id)}
-                        >
-                          <Iconify icon={'eva:more-vertical-fill'} />
-                        </IconButton>
-                      )}
-                    </TableCell>
-
-                    {/* <TableCell component="th" id={labelId} scope="row" padding="none"> */}
-                    <TableCell padding="none">{row.name}</TableCell>
-                  </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={1} />
-                </TableRow>
+      <Box sx={{ width: 'auto' }}>
+        <Paper>
+          <TableContainer component={Paper}>
+            {/* search bar + add icon */}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {!isAdding && (
+                <UserListToolbar
+                  numSelected={selected.length}
+                  filterName={filterName}
+                  onFilterName={handleFilterByName}
+                />
               )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              <EnhancedTableToolbar />
+            </Box>
 
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelRowsPerPage="שורות לעמוד"
-        />
+            <Table>
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+              />
+              <TableBody>
+                {visibleRows.map((row, index) => {
+                  return (
+                    <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
+                      <TableCell align="left">
+                        {props.columnName !== 'content' ? (
+                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
+                            <Iconify icon={'eva:more-vertical-fill'} />
+                          </IconButton>
+                        ) : (
+                          <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={(event) => handleOpenMenuSentens(event, row.name, row.id)}
+                          >
+                            <Iconify icon={'eva:more-vertical-fill'} />
+                          </IconButton>
+                        )}
+                      </TableCell>
 
-        <Popover
-          open={Boolean(open)}
-          anchorEl={open}
-          onClose={handleCloseMenu}
-          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          PaperProps={{
-            sx: {
-              p: 1,
-              width: 150,
-              '& .MuiMenuItem-root': {
-                px: 1,
-                typography: 'body2',
-                borderRadius: 0.75,
+                      {/* <TableCell component="th" id={labelId} scope="row" padding="none"> */}
+                      <TableCell padding="none">{row.name}</TableCell>
+                    </TableRow>
+                  );
+                })}
+                {emptyRows > 0 && (
+                  <TableRow
+                    style={{
+                      height: 53 * emptyRows,
+                    }}
+                  >
+                    <TableCell colSpan={1} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage="שורות לעמוד"
+          />
+
+          <Popover
+            open={Boolean(open)}
+            anchorEl={open}
+            onClose={handleCloseMenu}
+            anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            PaperProps={{
+              sx: {
+                p: 1,
+                width: 150,
+                '& .MuiMenuItem-root': {
+                  px: 1,
+                  typography: 'body2',
+                  borderRadius: 0.75,
+                },
               },
-            },
-          }}
-        >
-          <MenuItem
-            sx={{
-              color: 'success.main',
             }}
-            onClick={() => setIsEditing(true)}
           >
-            <Iconify icon={'carbon:edit'} sx={{ mr: 2 }} color={'success.main'} />
-            {'עריכה '}
-          </MenuItem>
+            <MenuItem
+              sx={{
+                color: 'success.main',
+              }}
+              onClick={() => setIsEditing(true)}
+            >
+              <Iconify icon={'carbon:edit'} sx={{ mr: 2 }} color={'success.main'} />
+              {'עריכה '}
+            </MenuItem>
 
-          <MenuItem
-            sx={{
-              color: 'error.main',
-            }}
-            onClick={DeleteName}
-          >
-            <Iconify icon={'mdi-light:delete'} sx={{ mr: 2 }} color={'error.main'} />
-            {'מחיקה '}
-          </MenuItem>
-        </Popover>
+            <MenuItem
+              sx={{
+                color: 'error.main',
+              }}
+              onClick={DeleteName}
+            >
+              <Iconify icon={'mdi-light:delete'} sx={{ mr: 2 }} color={'error.main'} />
+              {'מחיקה '}
+            </MenuItem>
+          </Popover>
 
-        <Modal
-          open={isEditing}
-          onClose={() => setIsEditing(false)}
-          aria-labelledby="modal-title"
-          aria-describedby="modal-description"
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              bgcolor: 'background.paper',
-              border: '2px solid #000',
-              boxShadow: 24,
-              p: 4,
-              width: '300px',
-              textAlign: 'center',
-            }}
+          <Modal
+            open={isEditing}
+            onClose={() => setIsEditing(false)}
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
           >
-            <h2 id="modal-title">עריכה</h2>
-            <TextField
-              label="שם"
-              defaultValue={name}
-              onChange={(event) => setEditedName(event.target.value)}
-              fullWidth
-            />
             <Box
               sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                mt: 2,
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'background.paper',
+                border: '2px solid #000',
+                boxShadow: 24,
+                p: 4,
+                width: '300px',
+                textAlign: 'center',
               }}
             >
-              <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCloseEdit}>
-                ביטול
-              </Button>
-              <Button variant="contained" sx={{ bgcolor: 'green' }} onClick={handleEdit}>
-                שמירה
-              </Button>
+              <h2 id="modal-title">עריכה</h2>
+              <TextField
+                label="שם"
+                defaultValue={name}
+                onChange={(event) => setEditedName(event.target.value)}
+                fullWidth
+              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  mt: 2,
+                }}
+              >
+                <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCloseEdit}>
+                  ביטול
+                </Button>
+                <Button variant="contained" sx={{ bgcolor: 'green' }} onClick={handleEdit}>
+                  שמירה
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        </Modal>
-      </Paper>
-    </Box>
+          </Modal>
+        </Paper>
+      </Box>
     </Card>
   );
 }
