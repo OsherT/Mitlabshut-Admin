@@ -69,8 +69,41 @@ const ERROR = {
   darker: '#7A0C2E',
   contrastText: '#fff',
 };
+const Dashboard = '#FFB448';
 
 const palette = {
+  dash1: {
+    lighter: '#FFE5D7',
+    light: '#FFC8AC',
+    main: '#FF9967',
+    dark: '#E57A49',
+    darker: '#A75035',
+    contrastText: '#fff',
+  },
+  dash2: {
+    lighter: '#FFEAD8',
+    light: '#FFCEB1',
+    main: '#FFB58A',
+    dark: '#E59E6E',
+    darker: '#A77654',
+    contrastText: '#fff',
+  },
+  dash3: {
+    lighter: '#FFF1E4',
+    light: '#FFDDB5',
+    main: '#FFD1AD',
+    dark: '#E5A37D',
+    darker: '#A7745A',
+    contrastText: '#fff',
+  },
+  dash4: {
+    lighter: '#FFF4E4',
+    light: '#FFE1BB',
+    main: '#FFDFBE',
+    dark: '#E5AA8D',
+    darker: '#A77A64',
+    contrastText: '#fff',
+  },
   common: { black: '#000', white: '#fff' },
   primary: PRIMARY,
   secondary: SECONDARY,
@@ -79,6 +112,7 @@ const palette = {
   warning: WARNING,
   error: ERROR,
   grey: GREY,
+  dash: Dashboard,
   divider: alpha(GREY[500], 0.24),
   text: {
     primary: GREY[800],
