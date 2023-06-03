@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { Stack, IconButton, InputAdornment, TextField } from '@mui/material';
 
 import { LoadingButton } from '@mui/lab';
+import swal from 'sweetalert';
 
 // components
 import Iconify from '../../../components/iconify';
 import { adminContext } from '../../../adminContext';
+
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
@@ -34,9 +36,7 @@ export default function LoginForm() {
     console.log(userPassword);
 
     if (userEmail === '' || userPassword === '') {
-                alert('אנא מלאי את כל הפרטים');
-
- 
+      swal('!שגיאה', 'נא למלא את כל הפרטים הנדרשים', 'error');
     } else {
       setUserEmail(userEmail.replace('%40', '@'));
       try {
@@ -51,12 +51,14 @@ export default function LoginForm() {
         console.log(user);
 
         if (user.user_Status === 'non active') {
-          alert('משתמש זה אינו פעיל במערכת');
+          swal('!שגיאה', 'משתמש זה לא פעיל במערכת', 'error');
+
           setUserEmail('');
           setUserPassword('');
         }
         if (user.is_admin === false) {
-          alert('אינך מנהלת, היכנסי למתלבשות דרך האפליקציה');
+          swal('!אינך מנהלת', 'אנא התחברי דרך אפליקציית מתלבשות', 'error');
+
           setUserEmail('');
           setUserPassword('');
         } else if (user.id > 0) {
@@ -64,7 +66,7 @@ export default function LoginForm() {
           // navigate('MainLayout');
           navigate('/dashboard', { replace: true });
         } else {
-          alert('הפרטים שמילאת אינם קיימים במערכת');
+          swal('!שגיאה', 'משתמש זה לא קיים במערכת', 'error');
           setUserEmail('');
           setUserPassword('');
         }
