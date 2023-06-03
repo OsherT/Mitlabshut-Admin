@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Divider, Button } from '@mui/material';
 import ProductsTable from '../components/ProductsTable';
-import firebase, { storage } from '../firebaseConfig';
 
 export default function ProductsPage() {
   // Brand
@@ -42,48 +41,8 @@ export default function ProductsPage() {
   const colorUpdateApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemColor?OldColorName=`;
   const colorColumnName = 'color';
 
-  // fireBase
-  const difPic =
-    'https://images.squarespace-cdn.com/content/v1/5beb55599d5abb5a47cc4907/1610465905997-2G8SGHXIYCGTF9BQB0OD/female+girl+woman+icon.jpg?format=500w';
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
-
-  const handleUpload = () => {
-    if (selectedFile) {
-      const storageRef = storage.ref();
-      const imagesRef = storageRef.child('AppImages');
-      const imageRef = imagesRef.child(selectedFile.name);
-
-      imageRef
-        .put(selectedFile)
-        .then(() => {
-          alert('Image uploaded successfully: yay!');
-          return imageRef.getDownloadURL();
-        })
-        .then((downloadURL) => {
-          const DefImage = downloadURL;
-          // Use DefImage variable as needed
-        })
-        .catch((error) => {
-          console.error('Error uploading image:', error);
-        });
-    } else {
-      console.error('No file selected.');
-    }
-  };
-
-
-
   return (
     <div>
-      <input type="file" onChange={handleFileChange} />
-      <Button variant="contained" onClick={handleUpload}>
-        העלי תמונה
-      </Button>
-
       <div style={{ display: 'flex', justifyContent: 'space-around' }}>
         <div>
           <ProductsTable

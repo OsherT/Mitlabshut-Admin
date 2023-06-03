@@ -20,6 +20,7 @@ import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import { TextField, Popover, MenuItem, Modal, Button } from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
+import firebase, { storage } from '../firebaseConfig';
 
 import Iconify from './iconify';
 
@@ -51,11 +52,21 @@ export default function ProductsTable(props) {
   const [isEditingType, setIsEditingType] = useState(false);
   const [typeName, setTypeName] = useState('');
   const [openTypeModal, setOpenTypeModal] = useState(null);
+  const [isAddingType, setIsAddingType] = useState(false);
 
   // color modal
   const [isEditingColor, setIsEditingColor] = useState(false);
   const [colorName, setColorName] = useState('');
   const [openColorModal, setOpenColorModal] = useState(null);
+  const [isAddingColor, setIsAddingColor] = useState(false);
+
+  // fireBase
+  const difPic =
+    'https://images.squarespace-cdn.com/content/v1/5beb55599d5abb5a47cc4907/1610465905997-2G8SGHXIYCGTF9BQB0OD/female+girl+woman+icon.jpg?format=500w';
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imageLink, setImageLink] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     GetList();
@@ -110,6 +121,62 @@ export default function ProductsTable(props) {
       setInputValue('');
       setIsAdding(false);
     }
+  };
+
+  // fireBase
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    const fileUrl = URL.createObjectURL(file);
+    setSelectedFile(fileUrl);
+  };
+
+  const handleUploadImage = () => {
+    if (selectedFile) {
+      setUploading(true);
+      const storageRef = storage.ref();
+      const imagesRef = storageRef.child('AppImages');
+      const imageRef = imagesRef.child(selectedFile.name);
+
+      imageRef
+        .put(selectedFile)
+        .then(() => {
+          alert('Image uploaded successfully: yay!');
+          return imageRef.getDownloadURL();
+        })
+        .then((downloadURL) => {
+          setImageLink(downloadURL);
+          // Use DefImage variable as needed
+          postImgDatebase();
+          setUploading(false);
+        })
+        .catch((error) => {
+          alert('Error uploading image:', error);
+          setUploading(false);
+        });
+    } else {
+      console.error('No file selected.');
+    }
+  };
+
+  const postImgDatebase = () => {
+    setUploading(true);
+    axios
+      .post(
+        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type?Item_type_name=${inputValue}&Item_type_image=${difPic}`
+      )
+      .then((res) => {
+        GetList();
+        alert(`${inputValue} נוסף בהצלחה`);
+        setOpenTypeModal(null);
+        setUploading(false);
+      })
+
+      .catch((err) => {
+        alert('err in postImgDatebase', err);
+      });
+    setInputValue('');
+    setImageLink('');
+    handleCancelClick();
   };
 
   function descendingComparator(a, b, orderBy) {
@@ -204,6 +271,31 @@ export default function ProductsTable(props) {
     );
   }
 
+  const handleAddClick = (name) => {
+    if (name === 'type') {
+      setIsAddingType(true);
+    } else if (name === 'color') {
+      alert(name);
+    } else {
+      setIsAdding(true);
+    }
+  };
+
+  const handleCancelClick = () => {
+    setInputValue('');
+    setIsAdding(false);
+
+    setIsAddingType(false);
+    setOpenTypeModal(false);
+    setOpenColorModal(false);
+
+    setIsEditing(false);
+    setOpen(null);
+    setEditedName('');
+
+    setSelectedFile(null);
+  };
+
   EnhancedTableHead.propTypes = {
     numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
@@ -216,21 +308,6 @@ export default function ProductsTable(props) {
   function EnhancedTableToolbar() {
     const handleInputChange = (event) => {
       setInputValue(event.target.value);
-    };
-
-    const handleAddClick = (name) => {
-      if (name === 'type') {
-        alert(name);
-      } else if (name === 'color') {
-        alert(name);
-      } else {
-        setIsAdding(true);
-      }
-    };
-
-    const handleCancleClick = () => {
-      setInputValue('');
-      setIsAdding(false);
     };
 
     return (
@@ -255,7 +332,7 @@ export default function ProductsTable(props) {
             </Tooltip>
 
             <Tooltip title="ביטול">
-              <IconButton onClick={handleCancleClick}>
+              <IconButton onClick={handleCancelClick}>
                 <Iconify icon={'carbon:close'} sx={{ mr: 2 }} />
               </IconButton>
             </Tooltip>
@@ -336,12 +413,6 @@ export default function ProductsTable(props) {
   const handleEdit = () => {
     setOpen(null);
     EditName();
-  };
-
-  const handleCloseEdit = () => {
-    setIsEditing(false);
-    setOpen(null);
-    setEditedName('');
   };
 
   const EditName = () => {
@@ -568,11 +639,127 @@ export default function ProductsTable(props) {
                   mt: 2,
                 }}
               >
-                <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCloseEdit}>
+                <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCancelClick}>
                   ביטול
                 </Button>
                 <Button variant="contained" sx={{ bgcolor: 'green' }} onClick={handleEdit}>
                   שמירה
+                </Button>
+              </Box>
+            </Box>
+          </Modal>
+
+          <Modal
+            open={isAddingType}
+            onClose={() => setIsAddingType(false)}
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'background.paper',
+                border: '2px solid #000',
+                boxShadow: 24,
+                p: 4,
+                width: '600px',
+                textAlign: 'center',
+              }}
+            >
+              <h2 id="modal-title">הוספת סוג פריט</h2>
+              <TextField label="שם" onChange={(event) => setInputValue(event.target.value)} fullWidth />
+              <Button
+                component="label"
+                htmlFor="file-upload"
+                className="custom-file-upload"
+                style={{ backgroundColor: 'gray', color: 'white', marginTop: 30 }}
+              >
+                {selectedFile ? 'החליפי תמונה' : ' בחרי תמונה'}
+                <input id="file-upload" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
+              </Button>
+
+              {selectedFile && (
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '200px',
+                    marginTop: '20px',
+                  }}
+                >
+                  <img
+                    src={selectedFile}
+                    alt="התמונה שנבחרה"
+                    style={{
+                      width: '200px',
+                      height: '200px',
+                      display: 'block',
+                    }}
+                  />
+                </div>
+              )}
+
+              {uploading ? (
+                <div
+                  style={{
+                    backgroundColor: 'white',
+                    padding: 20,
+                    borderRadius: 10,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      border: '4px solid #f3f3f3',
+                      borderTop: '4px solid #3498db',
+                      borderRadius: '50%',
+                      width: 30,
+                      height: 30,
+                      animation: 'spin 1s linear infinite',
+                    }}
+                  />
+                  <span
+                    style={{
+                      marginLeft: 10,
+                      color: 'black',
+                      fontSize: 16,
+                    }}
+                  >
+                    העלאת לוקחת זמן
+                  </span>
+                </div>
+              ) : null}
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  mt: 2,
+                }}
+              >
+                <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCancelClick}>
+                  ביטול
+                </Button>
+
+                <Button
+                  variant="contained"
+                  sx={{ bgcolor: 'green' }}
+                  onClick={() => {
+                    if (inputValue === '' || selectedFile === null) {
+                      alert('אנא מלאי את השדות הנדרשים');
+                    } else {
+                      // handleUploadImage();
+                      postImgDatebase();
+                    }
+                  }}
+                >
+                  העלי
                 </Button>
               </Box>
             </Box>
