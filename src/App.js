@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 // routes
@@ -14,7 +14,12 @@ import { adminContext } from './adminContext';
 
 export default function App() {
   const [loggedAdmin, setLoggedAdmin] = useState('');
-
+  useEffect(() => {
+    const storedLoggedAdmin = localStorage.getItem('loggedAdmin');
+    if (storedLoggedAdmin) {
+      setLoggedAdmin(JSON.parse(storedLoggedAdmin));
+    }
+  }, []);
     return (
       <HelmetProvider>
         <BrowserRouter>

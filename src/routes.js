@@ -15,7 +15,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 export default function Router() {
   const routes = useRoutes([
     {
-      path: '/',
+      path: '/login',
       element: <LoginPage />,
     },
     {
