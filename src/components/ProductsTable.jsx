@@ -16,6 +16,7 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
+
 import axios from 'axios';
 import { TextField, Popover, MenuItem, Modal, Button } from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
@@ -80,9 +81,9 @@ export default function ProductsTable(props) {
           } else if (props.columnName === 'size') {
             setRows(data.map((item) => ({ name: item.size_name })));
           } else if (props.columnName === 'type') {
-            setRows(data.map((item) => ({ name: item.item_type_name })));
+            setRows(data.map((item) => ({ name: item.item_type_name, image: item.item_type_image })));
           } else if (props.columnName === 'color') {
-            setRows(data.map((item) => ({ name: item.color_name })));
+            setRows(data.map((item) => ({ name: item.color_name, color: item.color })));
           } else if (props.columnName === 'content') {
             setRows(data.map((item) => ({ id: item.id, name: item.content })));
           }
@@ -148,7 +149,22 @@ export default function ProductsTable(props) {
       alignLeft: true,
     },
   ];
-
+  if (props.columnName === 'color') {
+    headCells.push({
+      id: 'color',
+      numeric: false,
+      disablePadding: true,
+      label: 'צבע',
+    });
+  }
+  if (props.columnName === 'type') {
+    headCells.push({
+      id: 'type',
+      numeric: false,
+      disablePadding: true,
+      label: 'תמונה',
+    });
+  }
   function EnhancedTableHead(props) {
     const { order, orderBy, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
@@ -412,9 +428,46 @@ export default function ProductsTable(props) {
                           </IconButton>
                         )}
                       </TableCell>
-
-                      {/* <TableCell component="th" id={labelId} scope="row" padding="none"> */}
                       <TableCell padding="none">{row.name}</TableCell>
+                      {props.columnName === 'color' && (
+                        <TableCell padding="none">
+                          <Box
+                            sx={{
+                              width: '60px',
+                              height: '60px',
+                              backgroundColor: row.color,
+                              display: 'inline-block',
+                              verticalAlign: 'middle',
+                            }}
+                          />
+                        </TableCell>
+                      )}
+                      {props.columnName === 'type' && (
+                        <TableCell padding="none">
+                          <img
+                            src={row.image}
+                            alt={row.name}
+                            style={{
+                              width: '77px',
+                              height: '77px',
+                              transition: 'transform 0.3s',
+                            }}
+                            onMouseOver={(e) => {
+                              e.target.style.transform = 'scale(1.7)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.target.style.transform = 'scale(1)';
+                            }}
+                            onFocus={(e) => {
+                              e.target.style.transform = 'scale(1.7)';
+
+                            }}
+                            onBlur={(e) => {
+                              e.target.style.transform = 'scale(1)';
+                            }}
+                          />
+                        </TableCell>
+                      )}
                     </TableRow>
                   );
                 })}
