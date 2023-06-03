@@ -158,7 +158,6 @@ export default function ProductsTable(props) {
   };
 
   const postImgDatebase = () => {
-    alert('in postImgDatebase');
     setUploading(true);
     axios
       .post(
@@ -167,8 +166,7 @@ export default function ProductsTable(props) {
       .then((res) => {
         GetList();
         alert(`${inputValue} נוסף בהצלחה`);
-        handleCancelClick();
-        
+        setOpenTypeModal(null);
         setUploading(false);
       })
 
@@ -177,6 +175,7 @@ export default function ProductsTable(props) {
       });
     setInputValue('');
     setImageLink('');
+    handleCancelClick();
   };
 
   function descendingComparator(a, b, orderBy) {
