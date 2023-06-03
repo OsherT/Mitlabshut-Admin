@@ -19,6 +19,8 @@ import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import swal from 'sweetalert';
+import Swal from 'sweetalert2';
+
 import { TextField, Popover, MenuItem, Modal, Button } from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
 import firebase, { storage } from '../firebaseConfig';
@@ -114,13 +116,13 @@ export default function ProductsTable(props) {
   // hvhdcjbcfv
   const handlePostClick = () => {
     if (inputValue === '') {
-      alert('אנא מלאי את השדות הנדרשים');
+      swal('אנא מלאי את השדות הנדרשים', '', 'error');
     } else {
       axios
         .post(props.postApi + inputValue)
         .then((res) => {
           GetList();
-          alert(`${inputValue} נוסף בהצלחה`);
+          swal(`${inputValue} נוסף בהצלחה`, '', 'success');
         })
         .catch((err) => {
           console.log('err in handlePostClick', err);
@@ -173,7 +175,8 @@ export default function ProductsTable(props) {
       )
       .then((res) => {
         GetList();
-        alert(`${inputValue} נוסף בהצלחה`);
+        swal(`${inputValue} נוסף בהצלחה`, '', 'success');
+
         setOpenTypeModal(null);
         setUploading(false);
       })
@@ -438,8 +441,8 @@ export default function ProductsTable(props) {
         `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemType?OldTypeName=${name}&NewTypeName=${editedName}&TypePic=${selectedFile}`
       )
       .then((res) => {
-        console.log('res', res);
-        alert(`${name} התעדכן בהצלחה ל-${editedName}`);
+        swal(`${name} התעדכן בהצלחה ל-${editedName}`, '', 'success');
+
         GetList();
       })
       .catch((err) => {
@@ -466,7 +469,7 @@ export default function ProductsTable(props) {
         .then((res) => {
           setIsEditing(false);
           GetList();
-          alert(`${name} הנתון התעדכן בהצלחה ${editedName}.`);
+          swal(`${name} הנתון התעדכן בהצלחה ${editedName}`, '', 'success');
           setEditedName('');
         })
         .catch((err) => {
@@ -474,26 +477,48 @@ export default function ProductsTable(props) {
         });
       // }
     } else {
-      alert('אנא ודאי שמילאת פרטים עדכניים');
+      swal('אנא ודאי שמילאת פרטים עדכניים', '', 'warning');
     }
   };
 
   const DeleteName = () => {
-    const confirmDelete = window.confirm(`האם את בטוחה? \nיתכן וימחקו פריטים לצמיתות`);
 
-    if (confirmDelete) {
-      axios
-        .delete(props.columnName === 'content' ? props.deleteApi + sentenceID : props.deleteApi + name)
-        .then((res) => {
-          GetList();
-          alert(`${name} נמחק בהצלחה`);
-        })
-        .catch((err) => {
-          console.log('DeleteName error', err);
-        });
-    }
+    Swal.fire({
+      title: 'האם את בטוחה?',
+      text: 'לא תוכלי לשחזר את המידע שנמחק!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'כן',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(props.columnName === 'content' ? props.deleteApi + sentenceID : props.deleteApi + name)
+          .then((res) => {
+            GetList();
+            Swal.fire(`${name} נמחק בהצלחה`, '', 'success');
+          })
+          .catch((err) => {
+            console.log('DeleteName error', err);
+          });
+      }
+    });
+
+    // if (confirmDelete) {
+    //   axios
+    //     .delete(props.columnName === 'content' ? props.deleteApi + sentenceID : props.deleteApi + name)
+    //     .then((res) => {
+    //       GetList();
+    //       swal(`${name} נמחק בהצלחה`, '', 'success');
+    //     })
+    //     .catch((err) => {
+    //       console.log('DeleteName error', err);
+    //     });
+    // }
     setOpen(null);
   };
+
   const AddColor = () => {
     const encodedColorCode = encodeURIComponent(selectedColor);
 
@@ -828,7 +853,7 @@ export default function ProductsTable(props) {
                   sx={{ bgcolor: 'green' }}
                   onClick={() => {
                     if (inputValue === '' || selectedFile === null) {
-                      alert('אנא מלאי את השדות הנדרשים');
+                      swal('אנא מלאי את השדות הנדרשים', '', 'warning');
                     } else {
                       // handleUploadImage();
                       postImgDatebase();
@@ -995,7 +1020,7 @@ export default function ProductsTable(props) {
                   }}
                   onClick={() => {
                     if (inputValue === '' || selectedColor === '#ffffff') {
-                      alert('אנא מלאי את השדות הנדרשים');
+                      swal('אנא מלאי את השדות הנדרשים', '', 'error');
                     } else {
                       AddColor();
                     }
