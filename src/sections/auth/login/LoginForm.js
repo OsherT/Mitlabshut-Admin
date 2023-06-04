@@ -63,7 +63,7 @@ export default function LoginForm() {
         } else if (user.id > 0) {
           setLoggedAdmin(user);
           localStorage.setItem('loggedAdmin', JSON.stringify(user));
-          navigate('/dashboard', { replace: true });
+          navigate('/dashboard/app', { replace: true });
         } else {
           swal('!שגיאה', 'משתמש זה לא קיים במערכת', 'error');
           setUserEmail('');

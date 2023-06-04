@@ -198,12 +198,11 @@ export default function ProductsTable(props) {
   };
 
   const postTypeDatabase = (link) => {
-
     const typeOBJ = {
       item_type_image: link,
       item_type_name: inputValue,
     };
-    
+
     setUploading(true);
     axios
       .post(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type`, typeOBJ)
@@ -445,7 +444,7 @@ export default function ProductsTable(props) {
   const handleOpenMenu = (event, name) => {
     setOpen(event.currentTarget);
     setName(name);
-
+    setEditedName(name);
   };
 
   const handleOpenMenuSentens = (event, name, id) => {
@@ -458,11 +457,13 @@ export default function ProductsTable(props) {
     setOpen(event.currentTarget);
     setName(name);
     setSelectedFile(image);
+    setEditedName(name);
   };
   const handleOpenMenuColor = (event, name, color) => {
     setOpen(event.currentTarget);
     setName(name);
     setSelectedColor(color);
+    setEditedName(name);
   };
 
   const handleCloseMenu = () => {
@@ -472,6 +473,7 @@ export default function ProductsTable(props) {
   const handleEdit = () => {
     setOpen(null);
     EditName();
+    setEditedName(name);
   };
 
   const handleEditType = () => {
@@ -500,16 +502,13 @@ export default function ProductsTable(props) {
   };
 
   const EditName = () => {
-    // const confirmUpdate = window.confirm(`האם את בטוחה? \nיתכן וישתנו פריטים לצמיתות`);
-
-    // if (confirmUpdate) {
-    if (editedName !== '') {
+    if (props.columnName !== 'color') {
       axios
         .put(`${props.updateApi}${name}&New${props.columnName}Name=${editedName}`)
         .then((res) => {
           setIsEditing(false);
           GetList();
-          swal(`${name} הנתון התעדכן בהצלחה ${editedName}`, '', 'success');
+          swal(`עודכן בהצלחה`, '', 'success');
           setEditedName('');
         })
         .catch((err) => {
@@ -517,7 +516,26 @@ export default function ProductsTable(props) {
         });
       // }
     } else {
-      swal('אנא ודאי שמילאת פרטים עדכניים', '', 'warning');
+      console.log(
+        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemColor?OldColorName=${name}&NewColorName=${editedName}&ColorCode=${encodeURIComponent(
+          selectedColor
+        )}`
+      );
+      axios
+        .put(
+          `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemColor?OldColorName=${name}&NewColorName=${editedName}&ColorCode=${encodeURIComponent(
+            selectedColor
+          )}`
+        )
+        .then((res) => {
+          setIsEditing(false);
+          GetList();
+          swal(`עודכן בהצלחה`, '', 'success');
+          setEditedName('');
+        })
+        .catch((err) => {
+          console.log('EditName error', err);
+        });
     }
   };
 
@@ -605,11 +623,17 @@ export default function ProductsTable(props) {
                   return (
                     <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
                       <TableCell align="left">
-                        {props.columnName !== 'content' && props.columnName !== 'type' && props.columnName !== 'color' && (
-                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        )}
+                        {props.columnName !== 'content' &&
+                          props.columnName !== 'type' &&
+                          props.columnName !== 'color' && (
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={(event) => handleOpenMenu(event, row.name)}
+                            >
+                              <Iconify icon={'eva:more-vertical-fill'} />
+                            </IconButton>
+                          )}
                         {props.columnName === 'content' && (
                           <IconButton
                             size="large"
@@ -766,6 +790,10 @@ export default function ProductsTable(props) {
                 p: 4,
                 width: '300px',
                 textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column ',
+                gap: 1,
               }}
             >
               <h2 id="modal-title">עריכה</h2>
@@ -775,31 +803,52 @@ export default function ProductsTable(props) {
                 onChange={(event) => setEditedName(event.target.value)}
                 fullWidth
               />
-              {props.columnName === 'color'&&
-              <>
-              <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-              <div
-                style={{
-                  width: '75px',
-                  height: '75px',
-                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
-                  borderRadius: '10%',
-                  background: selectedColor,
-                }}
-              />
-              </>
-              }
+              {props.columnName === 'color' && (
+                <>
+                  <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
+                  <div
+                    style={{
+                      width: '75px',
+                      height: '75px',
+                      boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
+                      borderRadius: '10%',
+                      background: selectedColor,
+                    }}
+                  />
+                </>
+              )}
               <Box
                 sx={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   mt: 2,
+                  gap: 1,
                 }}
               >
-                <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCancelClick}>
+                <Button
+                  variant="contained"
+                  className="hvr-bob"
+                  sx={{
+                    bgcolor: 'red',
+                    '&:hover': {
+                      bgcolor: 'red', // Keep the same color on hover
+                    },
+                  }}
+                  onClick={handleCancelClick}
+                >
                   ביטול
                 </Button>
-                <Button variant="contained" sx={{ bgcolor: 'green' }} onClick={handleEdit}>
+                <Button
+                  variant="contained"
+                  className="hvr-bob"
+                  sx={{
+                    bgcolor: 'green',
+                    '&:hover': {
+                      bgcolor: 'green', // Keep the same color on hover
+                    },
+                  }}
+                  onClick={handleEdit}
+                >
                   שמירה
                 </Button>
               </Box>
@@ -1075,10 +1124,9 @@ export default function ProductsTable(props) {
                   variant="contained"
                   sx={{
                     bgcolor: 'green',
-                     boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
                     '&:hover': {
                       bgcolor: 'green',
-                     
+
                       // Keep the same color on hover
                     },
                   }}

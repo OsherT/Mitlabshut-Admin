@@ -50,6 +50,7 @@ export default function Nav({ openNav, onCloseNav }) {
   }, [pathname]);
 
   const handleLogout = () => {
+    localStorage.removeItem('loggedAdmin');
     // Perform any necessary logout actions here
     setLoggedAdmin(''); // Clear the loggedAdmin state
     navigate('/login', { replace: true }); // Use navigate function to redirect to the login page
