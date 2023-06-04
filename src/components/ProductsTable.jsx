@@ -78,6 +78,7 @@ export default function ProductsTable(props) {
 
   useEffect(() => {
     GetList();
+    handleCancelClick();
   }, []);
 
   const GetList = () => {
@@ -112,7 +113,7 @@ export default function ProductsTable(props) {
         }
       );
   };
-  // hvhdcjbcfv
+
   const handlePostClick = () => {
     if (inputValue === '') {
       swal('אנא מלאי את השדות הנדרשים', '', 'error');
@@ -144,7 +145,6 @@ export default function ProductsTable(props) {
   };
 
   const handleUploadImage = () => {
-
     if (selectedFile && selectedFile.file) {
       const storageRef = storage.ref();
       const imagesRef = storageRef.child('AppImages');
@@ -174,12 +174,10 @@ export default function ProductsTable(props) {
   };
 
   const postTypeDatabase = (link) => {
-    alert('in postTypeDatabase');
     const typeOBJ = {
       item_type_image: link,
       item_type_name: inputValue,
     };
-    console.log(typeOBJ);
 
     axios
       .post(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type`, typeOBJ)
@@ -457,7 +455,7 @@ export default function ProductsTable(props) {
   const handleEditType = (link) => {
     const typeObjNew = {
       item_type_image: link,
-      item_type_name: name
+      item_type_name: name,
     };
 
     axios
@@ -538,6 +536,7 @@ export default function ProductsTable(props) {
             console.log('DeleteName error', err);
           });
       }
+      handleCancelClick();
     });
 
     // if (confirmDelete) {
@@ -1005,7 +1004,8 @@ export default function ProductsTable(props) {
                 }}
               >
                 <img
-                  src={selectedFile}
+                  // src={selectedFile}
+                  src={newTypeIMG ? selectedFile.url : selectedFile}
                   alt="התמונה שנבחרה"
                   style={{
                     width: '200px',
