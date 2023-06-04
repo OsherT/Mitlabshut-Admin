@@ -133,7 +133,6 @@ export default function ProductsTable(props) {
 
   // fireBase
   const handleFileChange = (event) => {
-    alert('in handleFileChange');
     setNewTypeIMG(true);
 
     const file = event.target.files[0];
@@ -145,7 +144,6 @@ export default function ProductsTable(props) {
   };
 
   const handleUploadImage = () => {
-    alert('in handleUploadImage');
 
     if (selectedFile && selectedFile.file) {
       const storageRef = storage.ref();
@@ -156,7 +154,7 @@ export default function ProductsTable(props) {
       imageRef
         .put(selectedFile.file)
         .then(() => {
-          alert('Image uploaded successfully to FB!');
+          console.log('Image uploaded successfully to FB!');
           return imageRef.getDownloadURL();
         })
         .then((downloadURL) => {
@@ -167,7 +165,7 @@ export default function ProductsTable(props) {
           }
         })
         .catch((error) => {
-          alert('Error uploading image:', error);
+          console.log('Error uploading image:', error);
           setUploading(false);
         });
     } else {
@@ -176,12 +174,13 @@ export default function ProductsTable(props) {
   };
 
   const postTypeDatabase = (link) => {
+    alert('in postTypeDatabase');
     const typeOBJ = {
       item_type_image: link,
       item_type_name: inputValue,
     };
+    console.log(typeOBJ);
 
-    setUploading(true);
     axios
       .post(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type`, typeOBJ)
       .then((res) => {
@@ -189,17 +188,15 @@ export default function ProductsTable(props) {
         swal(`${inputValue} נוסף בהצלחה`, '', 'success');
 
         setOpenTypeModal(null);
-        setUploading(false);
       })
 
       .catch((err) => {
         alert('err in postTypeDatabase', err);
       });
+
     handleCancelClick();
     setInputValue('');
   };
-
-  const updateTypeDatabase = (link) => {};
 
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -318,6 +315,7 @@ export default function ProductsTable(props) {
     setSelectedFile(null);
     setIsEditingType(false);
     setImageLink(null);
+    setNewTypeIMG(false);
   };
 
   EnhancedTableHead.propTypes = {
@@ -434,6 +432,7 @@ export default function ProductsTable(props) {
   const handleOpenMenuType = (event, name, image) => {
     setOpen(event.currentTarget);
     setName(name);
+    setEditedName(name);
     setSelectedFile(image);
   };
   const handleOpenMenuColor = (event, name, color) => {
@@ -452,28 +451,21 @@ export default function ProductsTable(props) {
   };
 
   const handleEditType = (link) => {
-    // if (editedName === '') {
-    //   swal(`אנא וודא לעדכן את הפרטים`, '', 'warning');
-    // } else {
-    alert('in handleEditType');
     const typeObjNew = {
       item_type_image: link,
-      item_type_name: name,
+      item_type_name: name
     };
 
-    console.log(typeObjNew);
-
     axios
-      .put(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemType?NewName=${name}`, typeObjNew)
+      .put(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemType?NewName=${editedName}`, typeObjNew)
       .then((res) => {
-        swal(`${name} התעדכן בהצלחה ל-${name}`, '', 'success');
+        swal(`המידע התעדכן בהצלחה`, '', 'success');
 
         GetList();
       })
       .catch((err) => {
         swal(`err in handleEditType`, '', 'error');
       });
-    // }
     handleCancelClick();
   };
 
@@ -996,7 +988,7 @@ export default function ProductsTable(props) {
                     if (newTypeIMG) {
                       handleUploadImage();
                     } else {
-                      postTypeDatabase(selectedFile);
+                      handleEditType(selectedFile);
                     }
                   }}
                 >
