@@ -612,17 +612,6 @@ export default function ProductsTable(props) {
                               <Iconify icon={'eva:more-vertical-fill'} />
                             </IconButton>
                           )}
-                        {props.columnName !== 'content' &&
-                          props.columnName !== 'type' &&
-                          props.columnName !== 'color' && (
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={(event) => handleOpenMenu(event, row.name)}
-                            >
-                              <Iconify icon={'eva:more-vertical-fill'} />
-                            </IconButton>
-                          )}
                         {props.columnName === 'content' && (
                           <IconButton
                             size="large"
