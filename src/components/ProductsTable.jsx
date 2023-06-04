@@ -198,18 +198,15 @@ export default function ProductsTable(props) {
   };
 
   const postTypeDatabase = (link) => {
-    console.log('in postTypeDatabase');
-    console.log('inputValue', inputValue);
-    console.log('imageLink', link);
-    console.log(
-      `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type?Item_type_name=${inputValue}&Item_type_image=${link}`
-    );
 
+    const typeOBJ = {
+      item_type_image: link,
+      item_type_name: inputValue,
+    };
+    
     setUploading(true);
     axios
-      .post(
-        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type?Item_type_name=${inputValue}&Item_type_image=${link}`
-      )
+      .post(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type`, typeOBJ)
       .then((res) => {
         GetList();
         swal(`${inputValue} נוסף בהצלחה`, '', 'success');
