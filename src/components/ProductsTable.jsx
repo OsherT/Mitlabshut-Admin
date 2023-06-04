@@ -136,27 +136,57 @@ export default function ProductsTable(props) {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     const fileUrl = URL.createObjectURL(file);
-    setSelectedFile(fileUrl);
+    setSelectedFile({
+      file,
+      url: fileUrl,
+    });
   };
 
+  // const handleUploadImage = () => {
+  //   if (selectedFile && selectedFile.file) {
+  //     const storageRef = storage.ref();
+  //     const imagesRef = storageRef.child('AppImages');
+  //     const imageRef = imagesRef.child(selectedFile.file.name);
+
+  //     console.log('in if');
+
+  //     imageRef
+  //       .put(selectedFile.file)
+  //       .then(() => {
+  //         alert('Image uploaded successfully to FB!');
+  //         return imageRef.getDownloadURL();
+  //       })
+  //       .then((downloadURL) => {
+  //         setImageLink(downloadURL);
+  //         postTypeDatabase(downloadURL);
+  //       })
+  //       .catch((error) => {
+  //         alert('Error uploading image:', error);
+  //         setUploading(false);
+  //       });
+  //   } else {
+  //     console.error('No file selected.');
+  //   }
+  // };
+
   const handleUploadImage = () => {
-    if (selectedFile) {
-      setUploading(true);
+    if (selectedFile && selectedFile.file) {
       const storageRef = storage.ref();
       const imagesRef = storageRef.child('AppImages');
-      const imageRef = imagesRef.child(selectedFile.name);
+      const fileName = encodeURIComponent(selectedFile.file.name);
+      const imageRef = imagesRef.child(fileName);
+
+      console.log('in if');
 
       imageRef
-        .put(selectedFile)
+        .put(selectedFile.file)
         .then(() => {
-          alert('Image uploaded successfully: yay!');
+          alert('Image uploaded successfully to FB!');
           return imageRef.getDownloadURL();
         })
         .then((downloadURL) => {
-          setImageLink(downloadURL);
-          // Use DefImage variable as needed
-          postImgDatebase();
-          setUploading(false);
+          console.log('Download URL:', downloadURL);
+          postTypeDatabase(downloadURL);
         })
         .catch((error) => {
           alert('Error uploading image:', error);
@@ -167,11 +197,18 @@ export default function ProductsTable(props) {
     }
   };
 
-  const postImgDatebase = () => {
+  const postTypeDatabase = (link) => {
+    console.log('in postTypeDatabase');
+    console.log('inputValue', inputValue);
+    console.log('imageLink', link);
+    console.log(
+      `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type?Item_type_name=${inputValue}&Item_type_image=${link}`
+    );
+
     setUploading(true);
     axios
       .post(
-        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type?Item_type_name=${inputValue}&Item_type_image=${difPic}`
+        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type?Item_type_name=${inputValue}&Item_type_image=${link}`
       )
       .then((res) => {
         GetList();
@@ -182,11 +219,10 @@ export default function ProductsTable(props) {
       })
 
       .catch((err) => {
-        alert('err in postImgDatebase', err);
+        alert('err in postTypeDatabase', err);
       });
-    setInputValue('');
-    setImageLink('');
     handleCancelClick();
+    setInputValue('');
   };
 
   function descendingComparator(a, b, orderBy) {
@@ -306,6 +342,7 @@ export default function ProductsTable(props) {
     setSelectedFile(null);
     setIsEditingType(false);
     setSelectedFile(null);
+    setImageLink(null);
   };
 
   EnhancedTableHead.propTypes = {
@@ -482,7 +519,6 @@ export default function ProductsTable(props) {
   };
 
   const DeleteName = () => {
-
     Swal.fire({
       title: 'האם את בטוחה?',
       text: 'לא תוכלי לשחזר את המידע שנמחק!',
@@ -793,7 +829,7 @@ export default function ProductsTable(props) {
                   }}
                 >
                   <img
-                    src={selectedFile}
+                    src={selectedFile.url}
                     alt="התמונה שנבחרה"
                     style={{
                       width: '200px',
@@ -855,8 +891,7 @@ export default function ProductsTable(props) {
                     if (inputValue === '' || selectedFile === null) {
                       swal('אנא מלאי את השדות הנדרשים', '', 'warning');
                     } else {
-                      // handleUploadImage();
-                      postImgDatebase();
+                      handleUploadImage();
                     }
                   }}
                 >

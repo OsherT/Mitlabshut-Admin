@@ -46,6 +46,32 @@ export default function ProductsPage() {
       <div style={{ display: 'flex', justifyContent: 'space-around' }}>
         <div>
           <ProductsTable
+            getApi={colorGetApi}
+            postApi={colorPostApi}
+            deleteApi={colorDeleteApi}
+            updateApi={colorUpdateApi}
+            columnName={colorColumnName}
+          />
+        </div>
+        <div>
+          <ProductsTable
+            getApi={typeGetApi}
+            postApi={typePostApi}
+            deleteApi={typeDeleteApi}
+            updateApi={typeUpdateApi}
+            columnName={typeColumnName}
+          />
+        </div>
+      </div>
+      <Divider sx={{ my: 10, border: 1, borderBlockColor: 'lightgray' }}>
+        {/* 
+               
+            */}
+      </Divider>
+
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <div>
+          <ProductsTable
             getApi={brandGetApi}
             postApi={brandPostApi}
             deleteApi={brandDeleteApi}
@@ -78,37 +104,8 @@ export default function ProductsPage() {
             columnName={sizeColumnName}
           />
         </div>
-        <div>
-          <ProductsTable
-            getApi={typeGetApi}
-            postApi={typePostApi}
-            deleteApi={typeDeleteApi}
-            updateApi={typeUpdateApi}
-            columnName={typeColumnName}
-          />
-        </div>
       </div>
-      <Divider sx={{ my: 10, border: 1, borderBlockColor: 'lightgray' }}>
-        {/* 
-               
-            */}
-      </Divider>
-      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-        <div>
-          <ProductsTable
-            getApi={colorGetApi}
-            postApi={colorPostApi}
-            deleteApi={colorDeleteApi}
-            updateApi={colorUpdateApi}
-            columnName={colorColumnName}
-          />
-        </div>
-      </div>
-      <Divider sx={{ my: 10, border: 1, borderBlockColor: 'lightgray' }}>
-        {/* 
-               
-            */}
-      </Divider>
+  
     </div>
   );
 }
