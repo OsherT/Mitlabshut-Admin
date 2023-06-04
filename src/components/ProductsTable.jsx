@@ -850,8 +850,11 @@ export default function ProductsTable(props) {
                   variant="contained"
                   sx={{
                     bgcolor: selectedColor,
+                     boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
                     '&:hover': {
-                      bgcolor: selectedColor, // Keep the same color on hover
+                      bgcolor: selectedColor,
+                     
+                      // Keep the same color on hover
                     },
                   }}
                   onClick={() => {
