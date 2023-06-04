@@ -448,6 +448,7 @@ export default function ProductsTable(props) {
   const handleOpenMenu = (event, name) => {
     setOpen(event.currentTarget);
     setName(name);
+
   };
 
   const handleOpenMenuSentens = (event, name, id) => {
@@ -460,6 +461,11 @@ export default function ProductsTable(props) {
     setOpen(event.currentTarget);
     setName(name);
     setSelectedFile(image);
+  };
+  const handleOpenMenuColor = (event, name, color) => {
+    setOpen(event.currentTarget);
+    setName(name);
+    setSelectedColor(color);
   };
 
   const handleCloseMenu = () => {
@@ -602,7 +608,7 @@ export default function ProductsTable(props) {
                   return (
                     <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
                       <TableCell align="left">
-                        {props.columnName !== 'content' && props.columnName !== 'type' && (
+                        {props.columnName !== 'content' && props.columnName !== 'type' && props.columnName !== 'color' && (
                           <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
@@ -622,6 +628,15 @@ export default function ProductsTable(props) {
                             size="large"
                             color="inherit"
                             onClick={(event) => handleOpenMenuType(event, row.name, row.image)}
+                          >
+                            <Iconify icon={'eva:more-vertical-fill'} />
+                          </IconButton>
+                        )}
+                        {props.columnName === 'color' && (
+                          <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={(event) => handleOpenMenuColor(event, row.name, row.color)}
                           >
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
@@ -763,6 +778,20 @@ export default function ProductsTable(props) {
                 onChange={(event) => setEditedName(event.target.value)}
                 fullWidth
               />
+              {props.columnName === 'color'&&
+              <>
+              <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
+              <div
+                style={{
+                  width: '75px',
+                  height: '75px',
+                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
+                  borderRadius: '10%',
+                  background: selectedColor,
+                }}
+              />
+              </>
+              }
               <Box
                 sx={{
                   display: 'flex',
@@ -1015,7 +1044,7 @@ export default function ProductsTable(props) {
               <h2 id="modal-title">הוספת צבע</h2>
               <TextField label="שם" onChange={(event) => setInputValue(event.target.value)} />
               <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-              {/* <div
+              <div
                 style={{
                   width: '75px',
                   height: '75px',
@@ -1023,7 +1052,7 @@ export default function ProductsTable(props) {
                   borderRadius: '10%',
                   background: selectedColor,
                 }}
-              /> */}
+              />
               <Box
                 sx={{
                   display: 'flex',
@@ -1048,10 +1077,10 @@ export default function ProductsTable(props) {
                   className="hvr-bob"
                   variant="contained"
                   sx={{
-                    bgcolor: selectedColor,
+                    bgcolor: 'green',
                      boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
                     '&:hover': {
-                      bgcolor: selectedColor,
+                      bgcolor: 'green',
                      
                       // Keep the same color on hover
                     },
