@@ -55,8 +55,7 @@ export default function ProductsTable(props) {
   const [isEditingType, setIsEditingType] = useState(false);
   const [openTypeModal, setOpenTypeModal] = useState(null);
   const [isAddingType, setIsAddingType] = useState(false);
-  const [typeImage, setTypeImage] = useState('');
-  // const [newTypeImage, setNewTypeImage] = useState(false);
+  const [newTypeIMG, setNewTypeIMG] = useState(false);
 
   // color modal
   const [isEditingColor, setIsEditingColor] = useState(false);
@@ -134,6 +133,9 @@ export default function ProductsTable(props) {
 
   // fireBase
   const handleFileChange = (event) => {
+    alert('in handleFileChange');
+    setNewTypeIMG(true);
+
     const file = event.target.files[0];
     const fileUrl = URL.createObjectURL(file);
     setSelectedFile({
@@ -142,41 +144,14 @@ export default function ProductsTable(props) {
     });
   };
 
-  // const handleUploadImage = () => {
-  //   if (selectedFile && selectedFile.file) {
-  //     const storageRef = storage.ref();
-  //     const imagesRef = storageRef.child('AppImages');
-  //     const imageRef = imagesRef.child(selectedFile.file.name);
-
-  //     console.log('in if');
-
-  //     imageRef
-  //       .put(selectedFile.file)
-  //       .then(() => {
-  //         alert('Image uploaded successfully to FB!');
-  //         return imageRef.getDownloadURL();
-  //       })
-  //       .then((downloadURL) => {
-  //         setImageLink(downloadURL);
-  //         postTypeDatabase(downloadURL);
-  //       })
-  //       .catch((error) => {
-  //         alert('Error uploading image:', error);
-  //         setUploading(false);
-  //       });
-  //   } else {
-  //     console.error('No file selected.');
-  //   }
-  // };
-
   const handleUploadImage = () => {
+    alert('in handleUploadImage');
+
     if (selectedFile && selectedFile.file) {
       const storageRef = storage.ref();
       const imagesRef = storageRef.child('AppImages');
       const fileName = encodeURIComponent(selectedFile.file.name);
       const imageRef = imagesRef.child(fileName);
-
-      console.log('in if');
 
       imageRef
         .put(selectedFile.file)
@@ -185,8 +160,11 @@ export default function ProductsTable(props) {
           return imageRef.getDownloadURL();
         })
         .then((downloadURL) => {
-          console.log('Download URL:', downloadURL);
-          postTypeDatabase(downloadURL);
+          if (isEditingType) {
+            handleEditType(downloadURL);
+          } else {
+            postTypeDatabase(downloadURL);
+          }
         })
         .catch((error) => {
           alert('Error uploading image:', error);
@@ -198,12 +176,11 @@ export default function ProductsTable(props) {
   };
 
   const postTypeDatabase = (link) => {
-
     const typeOBJ = {
       item_type_image: link,
       item_type_name: inputValue,
     };
-    
+
     setUploading(true);
     axios
       .post(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type`, typeOBJ)
@@ -221,6 +198,8 @@ export default function ProductsTable(props) {
     handleCancelClick();
     setInputValue('');
   };
+
+  const updateTypeDatabase = (link) => {};
 
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -338,7 +317,6 @@ export default function ProductsTable(props) {
 
     setSelectedFile(null);
     setIsEditingType(false);
-    setSelectedFile(null);
     setImageLink(null);
   };
 
@@ -445,7 +423,6 @@ export default function ProductsTable(props) {
   const handleOpenMenu = (event, name) => {
     setOpen(event.currentTarget);
     setName(name);
-
   };
 
   const handleOpenMenuSentens = (event, name, id) => {
@@ -474,22 +451,29 @@ export default function ProductsTable(props) {
     EditName();
   };
 
-  const handleEditType = () => {
-    //  need first to upload to FB and after to DB
+  const handleEditType = (link) => {
+    // if (editedName === '') {
+    //   swal(`אנא וודא לעדכן את הפרטים`, '', 'warning');
+    // } else {
+    alert('in handleEditType');
+    const typeObjNew = {
+      item_type_image: link,
+      item_type_name: name,
+    };
+
+    console.log(typeObjNew);
+
     axios
-      .put(
-        `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemType?OldTypeName=${name}&NewTypeName=${editedName}&TypePic=${selectedFile}`
-      )
+      .put(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemType?NewName=${name}`, typeObjNew)
       .then((res) => {
-        swal(`${name} התעדכן בהצלחה ל-${editedName}`, '', 'success');
+        swal(`${name} התעדכן בהצלחה ל-${name}`, '', 'success');
 
         GetList();
       })
       .catch((err) => {
-        alert('err in handleEditType', err);
+        swal(`err in handleEditType`, '', 'error');
       });
-    setEditedName('');
-    setIsAdding(false);
+    // }
     handleCancelClick();
   };
 
@@ -605,11 +589,17 @@ export default function ProductsTable(props) {
                   return (
                     <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
                       <TableCell align="left">
-                        {props.columnName !== 'content' && props.columnName !== 'type' && props.columnName !== 'color' && (
-                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row.name)}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        )}
+                        {props.columnName !== 'content' &&
+                          props.columnName !== 'type' &&
+                          props.columnName !== 'color' && (
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={(event) => handleOpenMenu(event, row.name)}
+                            >
+                              <Iconify icon={'eva:more-vertical-fill'} />
+                            </IconButton>
+                          )}
                         {props.columnName === 'content' && (
                           <IconButton
                             size="large"
@@ -775,20 +765,20 @@ export default function ProductsTable(props) {
                 onChange={(event) => setEditedName(event.target.value)}
                 fullWidth
               />
-              {props.columnName === 'color'&&
-              <>
-              <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-              <div
-                style={{
-                  width: '75px',
-                  height: '75px',
-                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
-                  borderRadius: '10%',
-                  background: selectedColor,
-                }}
-              />
-              </>
-              }
+              {props.columnName === 'color' && (
+                <>
+                  <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
+                  <div
+                    style={{
+                      width: '75px',
+                      height: '75px',
+                      boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
+                      borderRadius: '10%',
+                      background: selectedColor,
+                    }}
+                  />
+                </>
+              )}
               <Box
                 sx={{
                   display: 'flex',
@@ -1003,7 +993,11 @@ export default function ProductsTable(props) {
                   variant="contained"
                   sx={{ bgcolor: 'green' }}
                   onClick={() => {
-                    handleEditType();
+                    if (newTypeIMG) {
+                      handleUploadImage();
+                    } else {
+                      postTypeDatabase(selectedFile);
+                    }
                   }}
                 >
                   שמרי
@@ -1075,10 +1069,10 @@ export default function ProductsTable(props) {
                   variant="contained"
                   sx={{
                     bgcolor: 'green',
-                     boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
+                    boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
                     '&:hover': {
                       bgcolor: 'green',
-                     
+
                       // Keep the same color on hover
                     },
                   }}
