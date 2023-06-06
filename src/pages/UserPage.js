@@ -242,18 +242,6 @@ export default function UserPage() {
                     const selectedUser = selected.indexOf(fullName) !== -1;
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        {/* <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, fullName)} />
-                        </TableCell> */}
-
-                        {/* <TableCell component="th" scope="row" padding="20px" >
-                          <Stack direction="row" alignItems="center" spacing={4}>
-                            <Avatar alt={fullName} src={userImage} sx={{ margin: '10px' }}/>
-                            <Typography variant="subtitle2"  >
-                              {fullName}
-                            </Typography>
-                          </Stack>
-                        </TableCell> */}
                         <TableCell align="right">
                           <Avatar alt={fullName} src={userImage} sx={{ margin: '10px' }} />
                         </TableCell>

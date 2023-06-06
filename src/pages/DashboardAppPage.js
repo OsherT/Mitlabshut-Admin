@@ -6,6 +6,10 @@ import axios from 'axios';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography, Divider } from '@mui/material';
 import 'hover.css/css/hover-min.css';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import ProductsTable from '../components/ProductsTable';
 
@@ -159,7 +163,15 @@ export default function DashboardAppPage() {
                
             */}
         </Divider>
-
+        <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel2a-content"
+          id="panel2a-header"
+        >
+          <Typography>Accordion 2</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
         <ProductsTable
           getApi={sentencesGetApi}
           postApi={sentencesPostApi}
@@ -167,6 +179,9 @@ export default function DashboardAppPage() {
           updateApi={sentencesUpdateApi}
           columnName={sentencesColumnName}
         />
+        </AccordionDetails>
+      </Accordion>
+        
       </Container>
     </>
   );

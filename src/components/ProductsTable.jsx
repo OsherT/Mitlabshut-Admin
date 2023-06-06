@@ -567,7 +567,7 @@ export default function ProductsTable(props) {
         handleCancelClick();
       })
       .catch((err) => {
-        console.log('err in AddColor', err);
+        swal('!שגיאה ', `נסי שוב מאוחר יותר`, 'error');
       });
   };
   return (
