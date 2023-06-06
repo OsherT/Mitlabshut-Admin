@@ -189,7 +189,8 @@ export default function ProductsTable(props) {
       })
 
       .catch((err) => {
-        alert('err in postTypeDatabase', err);
+        console.log('err in postTypeDatabase', err);
+        swal(`נתון זה כבר קיים במערכת`, '', 'error');
       });
 
     handleCancelClick();
@@ -751,7 +752,9 @@ export default function ProductsTable(props) {
           </Popover>
           <Modal
             open={isEditing}
-            onClose={() => setIsEditing(false)}
+            onClose={() => {
+              setIsEditing(false);
+            }}
             aria-labelledby="modal-title"
             aria-describedby="modal-description"
           >
