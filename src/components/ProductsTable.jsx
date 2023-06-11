@@ -58,10 +58,8 @@ export default function ProductsTable(props) {
   const [newTypeIMG, setNewTypeIMG] = useState(false);
 
   // color modal
-  const [isEditingColor, setIsEditingColor] = useState(false);
-  const [colorName, setColorName] = useState('');
+
   const [openColorModal, setOpenColorModal] = useState(null);
-  const [isAddingColor, setIsAddingColor] = useState(false);
 
   // fireBase
   const difPic =
@@ -69,7 +67,6 @@ export default function ProductsTable(props) {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageLink, setImageLink] = useState(null);
-  const [uploading, setUploading] = useState(false);
 
   const [typeImageModal, settypeImageModal] = useState(false);
   const [chosenPhoto, setchosenPhoto] = useState('');
@@ -166,7 +163,6 @@ export default function ProductsTable(props) {
         })
         .catch((error) => {
           console.log('Error uploading image:', error);
-          setUploading(false);
         });
     } else {
       console.error('No file selected.');
@@ -426,6 +422,7 @@ export default function ProductsTable(props) {
   const handleOpenMenuSentens = (event, name, id) => {
     setOpen(event.currentTarget);
     setName(name);
+    setEditedName(name);
     setSentenceID(id);
   };
 
@@ -434,8 +431,8 @@ export default function ProductsTable(props) {
     setName(name);
     setEditedName(name);
     setSelectedFile(image);
-    setEditedName(name);
   };
+
   const handleOpenMenuColor = (event, name, color) => {
     setOpen(event.currentTarget);
     setName(name);
@@ -479,7 +476,7 @@ export default function ProductsTable(props) {
   };
 
   const EditName = () => {
-    if (props.columnName !== 'color') {
+    if (props.columnName !== 'color' && props.columnName !== 'content') {
       axios
         .put(`${props.updateApi}${name}&New${props.columnName}Name=${editedName}`)
         .then((res) => {
@@ -492,6 +489,22 @@ export default function ProductsTable(props) {
           console.log('EditName error', err);
         });
       // }
+    } else if (props.columnName === 'content') {
+      console.log(`sentenceID`, sentenceID);
+      console.log(`editedName`, editedName);
+      console.log(`${props.updateApi}${sentenceID}&content=${editedName}`);
+
+      axios
+        .put(`${props.updateApi}${sentenceID}&content=${editedName}`)
+        .then((res) => {
+          setIsEditing(false);
+          GetList();
+          swal(`עודכן בהצלחה`, '', 'success');
+          setEditedName('');
+        })
+        .catch((err) => {
+          console.log('EditName error', err);
+        });
     } else {
       console.log(
         `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemColor?OldColorName=${name}&NewColorName=${editedName}&ColorCode=${encodeURIComponent(
@@ -750,6 +763,8 @@ export default function ProductsTable(props) {
               {'מחיקה '}
             </MenuItem>
           </Popover>
+
+          {/* מודל עריכת פרטים */}
           <Modal
             open={isEditing}
             onClose={() => {

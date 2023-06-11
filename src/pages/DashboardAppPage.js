@@ -10,7 +10,6 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
 import ProductsTable from '../components/ProductsTable';
 
 // sections
@@ -42,7 +41,7 @@ export default function DashboardAppPage() {
   const sentencesPostApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/PostSentence?content=`;
   const sentencesGetApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/GetSentences`;
   const sentencesDeleteApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/DeleteSentence/`;
-  const sentencesUpdateApi = ``;
+  const sentencesUpdateApi = `https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/User/updateSentence?SenID=`;
   const sentencesColumnName = 'content';
 
   useEffect(() => {
