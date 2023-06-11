@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ChromePicker } from 'react-color';
+
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -21,7 +22,7 @@ import axios from 'axios';
 import swal from 'sweetalert';
 import Swal from 'sweetalert2';
 
-import { TextField, Popover, MenuItem, Modal, Button } from '@mui/material';
+import { TextField, Popover, MenuItem, Modal, Button, Container } from '@mui/material';
 import { UserListToolbar } from '../sections/@dashboard/user';
 import firebase, { storage } from '../firebaseConfig';
 
@@ -258,13 +259,12 @@ export default function ProductsTable(props) {
           <TableCell padding="checkbox">
             <text>{}</text>
           </TableCell>
-
           {headCells.map((headCell) => (
             <TableCell
               key={headCell.id}
-              align={'left'}
               padding={'normal'}
               sortDirection={orderBy === headCell.id ? order : false}
+              align={props.columnName === 'content' ? 'right' : 'left'}
             >
               <TableSortLabel
                 active={orderBy === headCell.id}
@@ -490,10 +490,6 @@ export default function ProductsTable(props) {
         });
       // }
     } else if (props.columnName === 'content') {
-      console.log(`sentenceID`, sentenceID);
-      console.log(`editedName`, editedName);
-      console.log(`${props.updateApi}${sentenceID}&content=${editedName}`);
-
       axios
         .put(`${props.updateApi}${sentenceID}&content=${editedName}`)
         .then((res) => {
@@ -584,311 +580,464 @@ export default function ProductsTable(props) {
       });
   };
   return (
-    <Card>
-      <Box sx={{ width: 'auto' }}>
-        <Paper>
-          <TableContainer component={Paper}>
-            {/* search bar + add icon */}
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {!isAdding && (
-                <UserListToolbar
-                  numSelected={selected.length}
-                  filterName={filterName}
-                  onFilterName={handleFilterByName}
-                />
-              )}
-              <EnhancedTableToolbar />
-            </Box>
+    <>
+      <Card>
+        <Box sx={{ width: 'auto' }}>
+          <Paper>
+            <TableContainer sx={{ backgroundColor: '#ede6d7' }} component={Paper}>
+              {/* search bar + add icon */}
+              <Box sx={{ display: 'flex', alignItems: 'right', justifyContent: 'flex-end' }}>
+                {!isAdding && (
+                  <UserListToolbar
+                    numSelected={selected.length}
+                    filterName={filterName}
+                    onFilterName={handleFilterByName}
+                  />
+                )}
+                <EnhancedTableToolbar />
+              </Box>
 
-            <Table>
-              <EnhancedTableHead
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={rows.length}
-              />
-              <TableBody>
-                {visibleRows.map((row, index) => {
-                  return (
-                    <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
-                      <TableCell align="left">
-                        {props.columnName !== 'content' &&
-                          props.columnName !== 'type' &&
-                          props.columnName !== 'color' && (
+              <Table>
+                <EnhancedTableHead
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows.length}
+                  columnName={props.columnName}
+                />
+                <TableBody>
+                  {visibleRows.map((row, index) => {
+                    return (
+                      <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
+                        <TableCell>
+                          {props.columnName !== 'content' &&
+                            props.columnName !== 'type' &&
+                            props.columnName !== 'color' && (
+                              <IconButton
+                                size="large"
+                                color="inherit"
+                                onClick={(event) => handleOpenMenu(event, row.name)}
+                              >
+                                <Iconify icon={'eva:more-vertical-fill'} />
+                              </IconButton>
+                            )}
+                          {props.columnName === 'content' && (
                             <IconButton
                               size="large"
                               color="inherit"
-                              onClick={(event) => handleOpenMenu(event, row.name)}
+                              onClick={(event) => handleOpenMenuSentens(event, row.name, row.id)}
                             >
                               <Iconify icon={'eva:more-vertical-fill'} />
                             </IconButton>
                           )}
-                        {props.columnName === 'content' && (
-                          <IconButton
-                            size="large"
-                            color="inherit"
-                            onClick={(event) => handleOpenMenuSentens(event, row.name, row.id)}
-                          >
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        )}
 
-                        {props.columnName === 'type' && (
-                          <IconButton
-                            size="large"
-                            color="inherit"
-                            onClick={(event) => handleOpenMenuType(event, row.name, row.image)}
-                          >
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        )}
-                        {props.columnName === 'color' && (
-                          <IconButton
-                            size="large"
-                            color="inherit"
-                            onClick={(event) => handleOpenMenuColor(event, row.name, row.color)}
-                          >
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        )}
-                      </TableCell>
-                      <TableCell padding="none">{row.name}</TableCell>
-                      {props.columnName === 'color' && (
-                        <TableCell padding="none">
-                          <Box
-                            sx={{
-                              width: '60px',
-                              height: '60px',
-                              backgroundColor: row.color,
-                              display: 'inline-block',
-                              verticalAlign: 'middle',
-                              borderRadius: '30%',
-                              boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
-                            }}
-                          />
+                          {props.columnName === 'type' && (
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={(event) => handleOpenMenuType(event, row.name, row.image)}
+                            >
+                              <Iconify icon={'eva:more-vertical-fill'} />
+                            </IconButton>
+                          )}
+                          {props.columnName === 'color' && (
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={(event) => handleOpenMenuColor(event, row.name, row.color)}
+                            >
+                              <Iconify icon={'eva:more-vertical-fill'} />
+                            </IconButton>
+                          )}
                         </TableCell>
-                      )}
-                      {props.columnName === 'type' && (
-                        <TableCell padding="none">
-                          <Button
-                            className="hvr-grow"
-                            style={{
-                              border: 'none',
-                              padding: 0,
-                              background: 'none',
-                              cursor: 'pointer',
-                            }}
-                            onClick={() => handleImageClicked(row.image, row.name)}
-                          >
-                            <img
-                              src={row.image}
-                              alt={row.name}
-                              style={{
-                                width: '77px',
-                                height: '77px',
-                                borderRadius: '10%',
+
+                        <TableCell
+                          align={props.columnName === 'content' ? 'right' : 'left'}
+                          padding={props.columnName === 'content' ? '5px' : 'none'}
+                        >
+                          {row.name}
+                        </TableCell>
+
+                        {props.columnName === 'color' && (
+                          <TableCell padding="none">
+                            <Box
+                              sx={{
+                                width: '60px',
+                                height: '60px',
+                                backgroundColor: row.color,
+                                display: 'inline-block',
+                                verticalAlign: 'middle',
+                                borderRadius: '30%',
+                                boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
                               }}
                             />
-                          </Button>
-                        </TableCell>
-                      )}
+                          </TableCell>
+                        )}
+                        {props.columnName === 'type' && (
+                          <TableCell padding="none">
+                            <Button
+                              className="hvr-grow"
+                              style={{
+                                border: 'none',
+                                padding: 0,
+                                background: 'none',
+                                cursor: 'pointer',
+                              }}
+                              onClick={() => handleImageClicked(row.image, row.name)}
+                            >
+                              <img
+                                src={row.image}
+                                alt={row.name}
+                                style={{
+                                  width: '77px',
+                                  height: '77px',
+                                  borderRadius: '10%',
+                                }}
+                              />
+                            </Button>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })}
+                  {emptyRows > 0 && (
+                    <TableRow
+                      style={{
+                        height: 53 * emptyRows,
+                      }}
+                    >
+                      <TableCell colSpan={1} />
                     </TableRow>
-                  );
-                })}
-                {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: 53 * emptyRows,
-                    }}
-                  >
-                    <TableCell colSpan={1} />
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            labelRowsPerPage="שורות לעמוד"
-          />
-          <Popover
-            open={Boolean(open)}
-            anchorEl={open}
-            onClose={handleCloseMenu}
-            anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            PaperProps={{
-              sx: {
-                p: 1,
-                width: 150,
-                '& .MuiMenuItem-root': {
-                  px: 1,
-                  typography: 'body2',
-                  borderRadius: 0.75,
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              labelRowsPerPage="שורות לעמוד"
+            />
+            <Popover
+              open={Boolean(open)}
+              anchorEl={open}
+              onClose={handleCloseMenu}
+              anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              PaperProps={{
+                sx: {
+                  p: 1,
+                  width: 150,
+                  '& .MuiMenuItem-root': {
+                    px: 1,
+                    typography: 'body2',
+                    borderRadius: 0.75,
+                  },
                 },
-              },
-            }}
-          >
-            <MenuItem
-              sx={{
-                color: 'success.main',
-              }}
-              onClick={() => {
-                if (props.columnName === 'type') {
-                  setIsEditingType(true);
-                } else {
-                  setIsEditing(true);
-                }
               }}
             >
-              <Iconify icon={'carbon:edit'} sx={{ mr: 2 }} color={'success.main'} />
-              {'עריכה '}
-            </MenuItem>
+              <MenuItem
+                sx={{
+                  color: 'success.main',
+                }}
+                onClick={() => {
+                  if (props.columnName === 'type') {
+                    setIsEditingType(true);
+                  } else {
+                    setIsEditing(true);
+                  }
+                }}
+              >
+                <Iconify icon={'carbon:edit'} sx={{ mr: 2 }} color={'success.main'} />
+                {'עריכה '}
+              </MenuItem>
 
-            <MenuItem
-              sx={{
-                color: 'error.main',
-              }}
-              onClick={DeleteName}
-            >
-              <Iconify icon={'mdi-light:delete'} sx={{ mr: 2 }} color={'error.main'} />
-              {'מחיקה '}
-            </MenuItem>
-          </Popover>
+              <MenuItem
+                sx={{
+                  color: 'error.main',
+                }}
+                onClick={DeleteName}
+              >
+                <Iconify icon={'mdi-light:delete'} sx={{ mr: 2 }} color={'error.main'} />
+                {'מחיקה '}
+              </MenuItem>
+            </Popover>
 
-          {/* מודל עריכת פרטים */}
-          <Modal
-            open={isEditing}
-            onClose={() => {
-              setIsEditing(false);
-            }}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-                width: '300px',
-                textAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                flexDirection: 'column ',
-                gap: 1,
+            {/* מודל עריכת פרטים */}
+            <Modal
+              open={isEditing}
+              onClose={() => {
+                setIsEditing(false);
               }}
+              aria-labelledby="modal-title"
+              aria-describedby="modal-description"
+              BackdropProps={{ onClick: null }} // Disable closing the modal when clicking outside
+              disableEscapeKeyDown // Disable closing the modal when pressing Escape key
             >
-              <h2 id="modal-title">עריכה</h2>
-              <TextField
-                label="שם"
-                defaultValue={name}
-                onChange={(event) => setEditedName(event.target.value)}
-                fullWidth
-              />
-              {props.columnName === 'color' && (
-                <>
-                  <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-                  <div
-                    style={{
-                      width: '75px',
-                      height: '75px',
-                      boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
-                      borderRadius: '10%',
-                      background: selectedColor,
-                    }}
-                  />
-                </>
-              )}
               <Box
                 sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  bgcolor: 'background.paper',
+                  border: '2px solid #000',
+                  boxShadow: 24,
+                  p: 4,
+                  width: props.columnName === 'content' ? '600px' : '300px',
+                  textAlign: 'center',
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  mt: 2,
+                  alignItems: 'center',
+                  flexDirection: 'column ',
                   gap: 1,
                 }}
               >
-                <Button
-                  variant="contained"
-                  className="hvr-bob"
-                  sx={{
-                    bgcolor: 'red',
-                    '&:hover': {
-                      bgcolor: 'red', // Keep the same color on hover
-                    },
-                  }}
-                  onClick={handleCancelClick}
-                >
-                  ביטול
-                </Button>
-                <Button
-                  variant="contained"
-                  className="hvr-bob"
-                  sx={{
-                    bgcolor: 'green',
-                    '&:hover': {
-                      bgcolor: 'green', // Keep the same color on hover
-                    },
-                  }}
-                  onClick={handleEdit}
-                >
-                  שמירה
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
-          {/* מודל הוספת סוג פריט */}
-          <Modal
-            open={isAddingType}
-            onClose={() => setIsAddingType(false)}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-                width: '400px',
-                textAlign: 'center',
-              }}
-            >
-              <h2 id="modal-title">הוספת סוג פריט</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <h2 id="modal-title">עריכת פרטים</h2>
                 <TextField
                   label="שם"
-                  onChange={(event) => setInputValue(event.target.value)}
-                  style={{ width: '200px' }}
+                  defaultValue={name}
+                  onChange={(event) => setEditedName(event.target.value)}
+                  fullWidth
+                  inputProps={{ dir: 'rtl' }}
                 />
-                <Button
-                  component="label"
-                  htmlFor="file-upload"
-                  className="custom-file-upload"
-                  style={{ backgroundColor: 'gray', color: 'white', marginTop: 30 }}
+                {props.columnName === 'color' && (
+                  <>
+                    <ChromePicker
+                      disableAlpha
+                      color={selectedColor}
+                      onChange={(color) => setSelectedColor(color.hex)}
+                    />
+                    <div
+                      style={{
+                        width: '75px',
+                        height: '75px',
+                        boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
+                        borderRadius: '10%',
+                        background: selectedColor,
+                      }}
+                    />
+                  </>
+                )}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mt: 2,
+                    gap: 1,
+                  }}
                 >
-                  {selectedFile ? 'החליפי תמונה' : ' בחרי תמונה'}
-                  <input id="file-upload" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
-                </Button>
-              </div>
+                  <Button
+                    variant="contained"
+                    className="hvr-bob"
+                    sx={{
+                      bgcolor: 'red',
+                      '&:hover': {
+                        bgcolor: 'red', // Keep the same color on hover
+                      },
+                    }}
+                    onClick={handleCancelClick}
+                  >
+                    ביטול
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className="hvr-bob"
+                    sx={{
+                      bgcolor: 'green',
+                      '&:hover': {
+                        bgcolor: 'green', // Keep the same color on hover
+                      },
+                    }}
+                    onClick={handleEdit}
+                  >
+                    שמירה
+                  </Button>
+                </Box>
+              </Box>
+            </Modal>
 
-              {selectedFile && (
+            {/* מודל הוספת סוג פריט */}
+            <Modal
+              open={isAddingType}
+              onClose={() => setIsAddingType(false)}
+              aria-labelledby="modal-title"
+              aria-describedby="modal-description"
+              BackdropProps={{ onClick: null }} // Disable closing the modal when clicking outside
+              disableEscapeKeyDown // Disable closing the modal when pressing Escape key
+            >
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  bgcolor: 'background.paper',
+                  border: '2px solid #000',
+                  boxShadow: 24,
+                  p: 4,
+                  width: '400px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexDirection: 'column ',
+                  gap: 1,
+                }}
+              >
+                <h2 id="modal-title">הוספת סוג פריט</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <TextField
+                    label="שם"
+                    onChange={(event) => setInputValue(event.target.value)}
+                    style={{ width: '200px' }}
+                    InputLabelProps={{
+                      shrink: true,
+                      position: 'end',
+                    }}
+                    inputProps={{ dir: 'rtl' }} // Set the input direction to RTL
+                  />
+
+                  <Button
+                    className="hvr-bob"
+                    variant="contained"
+                    sx={{
+                      bgcolor: 'gray',
+                      '&:hover': {
+                        bgcolor: 'gray', // Keep the same color on hover
+                      },
+                    }}
+                    component="label"
+                    htmlFor="file-upload"
+                    style={{ marginTop: 30 }}
+                  >
+                    {selectedFile ? 'החליפי תמונה' : ' בחרי תמונה'}
+                    <input id="file-upload" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
+                  </Button>
+                </div>
+
+                {selectedFile && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: '200px',
+                      marginTop: '20px',
+                    }}
+                  >
+                    <img
+                      src={selectedFile.url}
+                      alt="התמונה שנבחרה"
+                      style={{
+                        width: '200px',
+                        height: '200px',
+                        display: 'block',
+                      }}
+                    />
+                  </div>
+                )}
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mt: 5,
+                    gap: 1,
+                  }}
+                >
+                  <Button
+                    className="hvr-bob"
+                    variant="contained"
+                    sx={{
+                      bgcolor: 'red',
+                      '&:hover': {
+                        bgcolor: 'red', // Keep the same color on hover
+                      },
+                    }}
+                    onClick={handleCancelClick}
+                  >
+                    ביטול
+                  </Button>
+
+                  <Button
+                    className="hvr-bob"
+                    variant="contained"
+                    sx={{
+                      bgcolor: 'green',
+                      '&:hover': {
+                        bgcolor: 'green', // Keep the same color on hover
+                      },
+                    }}
+                    onClick={() => {
+                      if (inputValue === '' || selectedFile === null) {
+                        swal('אנא מלאי את השדות הנדרשים', '', 'warning');
+                      } else {
+                        handleUploadImage();
+                      }
+                    }}
+                  >
+                    שמרי
+                  </Button>
+                </Box>
+              </Box>
+            </Modal>
+
+            {/* מודל עדכון סוג פריט */}
+            <Modal
+              open={isEditingType}
+              onClose={() => setIsEditingType(false)}
+              aria-labelledby="modal-title"
+              aria-describedby="modal-description"
+              BackdropProps={{ onClick: null }} // Disable closing the modal when clicking outside
+              disableEscapeKeyDown // Disable closing the modal when pressing Escape key
+            >
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  bgcolor: 'background.paper',
+                  border: '2px solid #000',
+                  boxShadow: 24,
+                  p: 4,
+                  width: '400px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexDirection: 'column ',
+                  gap: 1,
+                }}
+              >
+                <h2 id="modal-title">עדכון סוג פריט</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <TextField
+                    label="שם"
+                    defaultValue={name}
+                    onChange={(event) => setEditedName(event.target.value)}
+                    style={{ width: '200px' }}
+                    inputProps={{ dir: 'rtl' }} // Set the input direction to RTL
+                    InputLabelProps={{
+                      shrink: true,
+                      position: 'end',
+                    }}
+                  />
+                  <Button
+                    component="label"
+                    htmlFor="file-upload"
+                    className="custom-file-upload"
+                    style={{ backgroundColor: 'gray', color: 'white', marginTop: 30 }}
+                  >
+                    החליפי תמונה
+                    <input id="file-upload" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
+                  </Button>
+                </div>
+
                 <div
                   style={{
                     display: 'flex',
@@ -899,7 +1048,8 @@ export default function ProductsTable(props) {
                   }}
                 >
                   <img
-                    src={selectedFile.url}
+                    // src={selectedFile}
+                    src={newTypeIMG ? selectedFile.url : selectedFile}
                     alt="התמונה שנבחרה"
                     style={{
                       width: '200px',
@@ -908,285 +1058,170 @@ export default function ProductsTable(props) {
                     }}
                   />
                 </div>
-              )}
 
-              {/* {uploading ? (
-                <div
-                  style={{
-                    backgroundColor: 'white',
-                    padding: 20,
-                    borderRadius: 10,
+                <Box
+                  sx={{
                     display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    mt: 5,
+                    gap: 1,
                   }}
                 >
-                  <div
-                    style={{
-                      border: '4px solid #f3f3f3',
-                      borderTop: '4px solid #3498db',
-                      borderRadius: '50%',
-                      width: 30,
-                      height: 30,
-                      animation: 'spin 1s linear infinite',
-                    }}
-                  />
-                  <span
-                    style={{
-                      marginLeft: 10,
-                      color: 'black',
-                      fontSize: 16,
+                  <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCancelClick}>
+                    ביטול
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    sx={{ bgcolor: 'green' }}
+                    onClick={() => {
+                      if (newTypeIMG) {
+                        handleUploadImage();
+                      } else {
+                        handleEditType(selectedFile);
+                      }
                     }}
                   >
-                    העלאת לוקחת זמן
-                  </span>
-                </div>
-              ) : null} */}
+                    שמרי
+                  </Button>
+                </Box>
+              </Box>
+            </Modal>
 
+            {/* מודל הוספת צבע */}
+            <Modal
+              open={openColorModal}
+              onClose={() => setOpenColorModal(false)}
+              aria-labelledby="modal-title"
+              aria-describedby="modal-description"
+              BackdropProps={{ onClick: null }} // Disable closing the modal when clicking outside
+              disableEscapeKeyDown // Disable closing the modal when pressing Escape key
+            >
               <Box
                 sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  bgcolor: 'background.paper',
+                  border: '2px solid #000',
+                  boxShadow: 24,
+                  p: 4,
+                  width: '400px',
+                  textAlign: 'center',
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  mt: 5,
-                }}
-              >
-                <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCancelClick}>
-                  ביטול
-                </Button>
-
-                <Button
-                  variant="contained"
-                  sx={{ bgcolor: 'green' }}
-                  onClick={() => {
-                    if (inputValue === '' || selectedFile === null) {
-                      swal('אנא מלאי את השדות הנדרשים', '', 'warning');
-                    } else {
-                      handleUploadImage();
-                    }
-                  }}
-                >
-                  העלי
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
-          {/* /// */}
-
-          {/* מודל עדכון סוג פריט */}
-          <Modal
-            open={isEditingType}
-            onClose={() => setIsEditingType(false)}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-                width: '400px',
-                textAlign: 'center',
-              }}
-            >
-              <h2 id="modal-title">עדכון סוג פריט</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <TextField
-                  label="שם"
-                  defaultValue={name}
-                  onChange={(event) => setEditedName(event.target.value)}
-                  style={{ width: '200px' }}
-                />
-                <Button
-                  component="label"
-                  htmlFor="file-upload"
-                  className="custom-file-upload"
-                  style={{ backgroundColor: 'gray', color: 'white', marginTop: 30 }}
-                >
-                  החליפי תמונה
-                  <input id="file-upload" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
-                </Button>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
                   alignItems: 'center',
-                  height: '200px',
-                  marginTop: '20px',
-                }}
-              >
-                <img
-                  // src={selectedFile}
-                  src={newTypeIMG ? selectedFile.url : selectedFile}
-                  alt="התמונה שנבחרה"
-                  style={{
-                    width: '200px',
-                    height: '200px',
-                    display: 'block',
-                  }}
-                />
-              </div>
-
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  mt: 5,
-                }}
-              >
-                <Button variant="contained" sx={{ bgcolor: 'red' }} onClick={handleCancelClick}>
-                  ביטול
-                </Button>
-
-                <Button
-                  variant="contained"
-                  sx={{ bgcolor: 'green' }}
-                  onClick={() => {
-                    if (newTypeIMG) {
-                      handleUploadImage();
-                    } else {
-                      handleEditType(selectedFile);
-                    }
-                  }}
-                >
-                  שמרי
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
-          {/* /// */}
-
-          {/* מודל הוספת צבע */}
-          <Modal
-            open={openColorModal}
-            onClose={() => setOpenColorModal(false)}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-                width: '600px',
-                textAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                flexDirection: 'column ',
-                gap: 1,
-              }}
-            >
-              <h2 id="modal-title">הוספת צבע</h2>
-              <TextField label="שם" onChange={(event) => setInputValue(event.target.value)} />
-              <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-              <div
-                style={{
-                  width: '75px',
-                  height: '75px',
-                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
-                  borderRadius: '10%',
-                  background: selectedColor,
-                }}
-              />
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
+                  flexDirection: 'column ',
                   gap: 1,
                 }}
               >
-                <Button
-                  className="hvr-bob"
-                  variant="contained"
-                  sx={{
-                    bgcolor: 'red',
-                    '&:hover': {
-                      bgcolor: 'red', // Keep the same color on hover
-                    },
+                <h2 id="modal-title">הוספת צבע</h2>
+                <TextField
+                  label="שם"
+                  inputProps={{ dir: 'rtl' }}
+                  onChange={(event) => setInputValue(event.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                    position: 'end',
                   }}
-                  onClick={handleCancelClick}
-                >
-                  ביטול
-                </Button>
-                <Button
-                  className="hvr-bob"
-                  variant="contained"
+                />
+                <ChromePicker disableAlpha color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
+                <div
+                  style={{
+                    width: '75px',
+                    height: '75px',
+                    boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
+                    borderRadius: '10%',
+                    background: selectedColor,
+                  }}
+                />
+                <Box
                   sx={{
-                    bgcolor: 'green',
-                    '&:hover': {
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: 1,
+                  }}
+                >
+                  <Button
+                    className="hvr-bob"
+                    variant="contained"
+                    sx={{
+                      bgcolor: 'red',
+                      '&:hover': {
+                        bgcolor: 'red', // Keep the same color on hover
+                      },
+                    }}
+                    onClick={handleCancelClick}
+                  >
+                    ביטול
+                  </Button>
+                  <Button
+                    className="hvr-bob"
+                    variant="contained"
+                    sx={{
                       bgcolor: 'green',
+                      '&:hover': {
+                        bgcolor: 'green',
 
-                      // Keep the same color on hover
-                    },
+                        // Keep the same color on hover
+                      },
+                    }}
+                    onClick={() => {
+                      if (inputValue === '' || selectedColor === '#ffffff') {
+                        swal('אנא מלאי את השדות הנדרשים', '', 'error');
+                      } else {
+                        AddColor();
+                      }
+                    }}
+                  >
+                    שמרי
+                  </Button>
+                </Box>
+              </Box>
+            </Modal>
+
+            {/* מודל הצגת תמונת סוג פריט */}
+            <Modal
+              open={typeImageModal}
+              onClose={() => settypeImageModal(false)}
+              aria-labelledby="modal-title"
+              aria-describedby="modal-description"
+            >
+              <Box
+                sx={{
+                  position: 'absolute',
+                  display: 'flex',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  bgcolor: 'background.paper',
+                  border: '2px solid #000',
+                  boxShadow: 24,
+                  p: 4,
+                  width: '300px',
+                  textAlign: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'column ',
+                }}
+              >
+                <h2 id="modal-title">{chosenPhotoName}</h2>
+                <img
+                  src={chosenPhoto}
+                  alt={chosenPhotoName}
+                  style={{
+                    maxWidth: '80%',
+                    maxHeight: '80%',
+                    borderRadius: '10%',
                   }}
-                  onClick={() => {
-                    if (inputValue === '' || selectedColor === '#ffffff') {
-                      swal('אנא מלאי את השדות הנדרשים', '', 'error');
-                    } else {
-                      AddColor();
-                    }
-                  }}
-                >
-                  שמרי
+                />
+                <Button style={{ marginTop: 40 }} onClick={() => settypeImageModal(false)}>
+                  <Iconify icon={'ph:x-thin'} />
                 </Button>
               </Box>
-            </Box>
-          </Modal>
-          {/* /// */}
-
-          {/* מודל הצגת תמונת סוג פריט */}
-          <Modal
-            open={typeImageModal}
-            onClose={() => settypeImageModal(false)}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                display: 'flex',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-                width: '300px',
-                textAlign: 'center',
-                alignItems: 'center',
-                flexDirection: 'column ',
-              }}
-            >
-              <h2 id="modal-title">{chosenPhotoName}</h2>
-              <img
-                src={chosenPhoto}
-                alt={chosenPhotoName}
-                style={{
-                  maxWidth: '80%',
-                  maxHeight: '80%',
-                  borderRadius: '10%',
-                }}
-              />
-              <Button style={{ marginTop: 40 }} onClick={() => settypeImageModal(false)}>
-                <Iconify icon={'ph:x-thin'} />
-              </Button>
-            </Box>
-          </Modal>
-          {/* /// */}
-        </Paper>
-      </Box>
-    </Card>
+            </Modal>
+          </Paper>
+        </Box>
+      </Card>
+    </>
   );
 }

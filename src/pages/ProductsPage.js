@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Divider, Button } from '@mui/material';
+import React from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Divider } from '@mui/material';
 import ProductsTable from '../components/ProductsTable';
 
 export default function ProductsPage() {
@@ -43,6 +44,9 @@ export default function ProductsPage() {
 
   return (
     <div>
+      <Helmet>
+        <title>  ניהול פרטי מוצרים </title>
+      </Helmet>
       <div style={{ display: 'flex', justifyContent: 'space-around' }}>
         <div>
           <ProductsTable
@@ -105,7 +109,6 @@ export default function ProductsPage() {
           />
         </div>
       </div>
-  
     </div>
   );
 }

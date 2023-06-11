@@ -23,6 +23,7 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Box,
 } from '@mui/material';
 // components
 import { Icon } from '@iconify/react';
@@ -217,15 +218,17 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> משתמשות </title>
+        <title> ניהול משתמשות </title>
       </Helmet>
 
-      <Container>
-        <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+      <Container >
+        <Card sx={{ backgroundColor: '#ede6d7'  }}>
+          <Box sx={{ display: 'flex', alignItems: 'right', justifyContent: 'flex-end' }}>
+            <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          </Box>
 
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
+            <TableContainer sx={{  minWidth: 800 }}>
               <Table>
                 <UserListHead
                   order={order}
@@ -255,9 +258,9 @@ export default function UserPage() {
                             {status === 'non active' ? 'החשבון אינו פעיל' : 'החשבון פעיל'}
                           </Label>
                         </TableCell>
-                        <TableCell align="right" >
+                        <TableCell align="right">
                           {isAdmin && (
-                            <Tooltip >
+                            <Tooltip>
                               <IconButton size="large" color="inherit" disabled>
                                 <Icon icon="material-symbols:admin-panel-settings-outline" color="#d7ba7b" />
                               </IconButton>

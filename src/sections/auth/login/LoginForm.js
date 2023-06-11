@@ -77,18 +77,15 @@ export default function LoginForm() {
 
   return (
     <>
-
       <Stack spacing={3}>
         <TextField
           name="email"
           label="דואר אלקטרוני"
           value={userEmail}
           onChange={handleEmailChange}
-          // InputProps={{
-          //   style: { backgroundColor: '#ede6d7' },
-          // }}
-          InputProps={{
-            style: { backgroundColor: 'rgb(232, 240, 254)' },
+          InputLabelProps={{
+            shrink: true,
+            position: 'end',
           }}
           sx={{ direction: 'rtl' }}
         />
@@ -106,6 +103,10 @@ export default function LoginForm() {
               </InputAdornment>
             ),
             style: { backgroundColor: 'rgb(232, 240, 254)' },
+          }}
+          InputLabelProps={{
+            shrink: true,
+            position: 'end',
           }}
           value={userPassword}
           onChange={handlePasswordChange}

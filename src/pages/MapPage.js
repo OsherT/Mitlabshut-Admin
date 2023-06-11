@@ -360,7 +360,7 @@ const MapPage = (props) => {
   return (
     <>
       <Helmet>
-        <title>מפה</title>
+        <title>ניהול חנוית על המפה</title>
       </Helmet>
       <div style={{ position: 'relative', height: '400px' }}>
         <div style={{ textAlign: 'left', margin: '10px', marginBottom: '20px' }}>
