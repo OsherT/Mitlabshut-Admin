@@ -86,8 +86,29 @@ export default function LoginForm() {
           InputLabelProps={{
             shrink: true,
             position: 'end',
+            sx: {
+              color: '#ddb96c', // Replace 'red' with the default label color
+              '&.Mui-focused': {
+                color: 'black', // Replace 'green' with the focused label color
+              },
+            },
           }}
-          sx={{ direction: 'rtl' }}
+          
+          sx={{
+            direction: 'rtl',
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#ddb96c', // Replace 'red' with the default border color
+              },
+              '&:hover fieldset': {
+                borderColor: '#ddb96c', // Replace 'blue' with the hover border color
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#ddb96c', // Replace 'green' with the focused border color
+              },
+              
+            },
+          }}
         />
 
         <TextField
@@ -102,15 +123,36 @@ export default function LoginForm() {
                 </IconButton>
               </InputAdornment>
             ),
-            style: { backgroundColor: 'rgb(232, 240, 254)' },
+            style: { backgroundColor: 'transparent' },
+            
           }}
           InputLabelProps={{
             shrink: true,
             position: 'end',
+            sx: {
+              color: '#ddb96c', 
+              '&.Mui-focused': {
+                color: 'black', 
+              },
+            },
           }}
           value={userPassword}
           onChange={handlePasswordChange}
-          sx={{ direction: 'rtl' }}
+          sx={{
+            direction: 'rtl',
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#ddb96c', 
+              },
+              '&:hover fieldset': {
+                borderColor: '#ddb96c', 
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#ddb96c', 
+              },
+              
+            },
+          }}
         />
       </Stack>
 

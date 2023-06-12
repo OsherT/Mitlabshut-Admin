@@ -114,13 +114,22 @@ export default function ProductsTable(props) {
 
   const handlePostClick = () => {
     if (inputValue === '') {
-      swal('אנא מלאי את השדות הנדרשים', '', 'error');
+      handleCancelClick();
+      Swal.fire({
+        title: 'אנא מלאי את השדות הנדרשים',
+        icon: 'error',
+        confirmButtonText: 'אוקיי',
+      });
     } else {
       axios
         .post(props.postApi + inputValue)
         .then((res) => {
           GetList();
-          swal(`${inputValue} נוסף בהצלחה`, '', 'success');
+          Swal.fire({
+            title: `${inputValue} נוסף בהצלחה`,
+            icon: 'success',
+            confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+          });
         })
         .catch((err) => {
           console.log('err in handlePostClick', err);
@@ -180,14 +189,21 @@ export default function ProductsTable(props) {
       .post(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/PostItem_type`, typeOBJ)
       .then((res) => {
         GetList();
-        swal(`${inputValue} נוסף בהצלחה`, '', 'success');
-
+        Swal.fire({
+          title: `${inputValue} נוסף בהצלחה`,
+          icon: 'success',
+          confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+        });
         setOpenTypeModal(null);
       })
 
       .catch((err) => {
         console.log('err in postTypeDatabase', err);
-        swal(`נתון זה כבר קיים במערכת`, '', 'error');
+        Swal.fire({
+          title: 'נתון זה כבר קיים במערכת',
+          icon: 'error',
+          confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+        });
       });
 
     handleCancelClick();
@@ -256,7 +272,7 @@ export default function ProductsTable(props) {
     return (
       <TableHead>
         <TableRow>
-          <TableCell padding="checkbox">
+          <TableCell padding="checkbox" sx={{ backgroundColor: '#FFF4E4' }}>
             <text>{}</text>
           </TableCell>
           {headCells.map((headCell) => (
@@ -265,6 +281,7 @@ export default function ProductsTable(props) {
               padding={'normal'}
               sortDirection={orderBy === headCell.id ? order : false}
               align={props.columnName === 'content' ? 'right' : 'left'}
+              sx={{ backgroundColor: '#FFF4E4' }}
             >
               <TableSortLabel
                 active={orderBy === headCell.id}
@@ -459,12 +476,19 @@ export default function ProductsTable(props) {
     axios
       .put(`https://proj.ruppin.ac.il/cgroup31/test2/tar2/api/Item/updateItemType?NewName=${editedName}`, typeObjNew)
       .then((res) => {
-        swal(`המידע התעדכן בהצלחה`, '', 'success');
-
+        Swal.fire({
+          title: 'המידע התעדכן בהצלחה',
+          icon: 'success',
+          confirmButtonText: 'אוקיי',
+        });
         GetList();
       })
       .catch((err) => {
-        swal(`err in handleEditType`, '', 'error');
+        Swal.fire({
+          title: 'קיימת בעיה בשרת, אנא נסי שוב מאוחר יותר',
+          icon: 'error',
+          confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+        });
       });
     handleCancelClick();
   };
@@ -482,10 +506,20 @@ export default function ProductsTable(props) {
         .then((res) => {
           setIsEditing(false);
           GetList();
-          swal(`עודכן בהצלחה`, '', 'success');
+          Swal.fire({
+            title: 'עודכן בהצלחה',
+            icon: 'success',
+            confirmButtonText: 'אוקיי',
+          });
           setEditedName('');
         })
         .catch((err) => {
+          setOpen(false);
+          Swal.fire({
+            title: 'קיימת בעיה בשרת, אנא נסי שוב מאוחר יותר',
+            icon: 'error',
+            confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+          });
           console.log('EditName error', err);
         });
       // }
@@ -495,10 +529,19 @@ export default function ProductsTable(props) {
         .then((res) => {
           setIsEditing(false);
           GetList();
-          swal(`עודכן בהצלחה`, '', 'success');
+          Swal.fire({
+            title: 'עודכן בהצלחה',
+            icon: 'success',
+            confirmButtonText: 'אוקיי',
+          });
           setEditedName('');
         })
         .catch((err) => {
+          Swal.fire({
+            title: 'קיימת בעיה בשרת, אנא נסי שוב מאוחר יותר',
+            icon: 'error',
+            confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+          });
           console.log('EditName error', err);
         });
     } else {
@@ -516,10 +559,19 @@ export default function ProductsTable(props) {
         .then((res) => {
           setIsEditing(false);
           GetList();
-          swal(`עודכן בהצלחה`, '', 'success');
+          Swal.fire({
+            title: 'עודכן בהצלחה',
+            icon: 'success',
+            confirmButtonText: 'אוקיי',
+          });
           setEditedName('');
         })
         .catch((err) => {
+          Swal.fire({
+            title: 'קיימת בעיה בשרת, אנא נסי שוב מאוחר יותר',
+            icon: 'error',
+            confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+          });
           console.log('EditName error', err);
         });
     }
@@ -534,15 +586,25 @@ export default function ProductsTable(props) {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'כן',
+      cancelButtonText: 'ביטול',
     }).then((result) => {
       if (result.isConfirmed) {
         axios
           .delete(props.columnName === 'content' ? props.deleteApi + sentenceID : props.deleteApi + name)
           .then((res) => {
             GetList();
-            Swal.fire(`${name} נמחק בהצלחה`, '', 'success');
+            Swal.fire({
+              title: `${name} נמחק בהצלחה`,
+              icon: 'success',
+              confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+            });
           })
           .catch((err) => {
+            Swal.fire({
+              title: 'קיימת בעיה בשרת, אנא נסי שוב מאוחר יותר',
+              icon: 'error',
+              confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+            });
             console.log('DeleteName error', err);
           });
       }
@@ -572,11 +634,21 @@ export default function ProductsTable(props) {
       )
       .then((res) => {
         GetList();
-        swal('!הצבע נוסף', `הצבע ${inputValue} נוסף בהצלחה `, 'success');
+        Swal.fire({
+          title: '!הצבע נוסף',
+          text: `הצבע ${inputValue} נוסף בהצלחה`,
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+        });
         handleCancelClick();
       })
       .catch((err) => {
-        swal('!שגיאה ', `נסי שוב מאוחר יותר`, 'error');
+        Swal.fire({
+          title: 'קיימת בעיה בשרת, אנא נסי שוב מאוחר יותר',
+          icon: 'error',
+          confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+        });
       });
   };
   return (
@@ -584,14 +656,17 @@ export default function ProductsTable(props) {
       <Card>
         <Box sx={{ width: 'auto' }}>
           <Paper>
-            <TableContainer sx={{ backgroundColor: '#ede6d7' }} component={Paper}>
+            <TableContainer component={Paper}>
               {/* search bar + add icon */}
-              <Box sx={{ display: 'flex', alignItems: 'right', justifyContent: 'flex-end' }}>
+              <Box
+                sx={{ display: 'flex', alignItems: 'right', justifyContent: 'flex-end', backgroundColor: '#FFEAD8' }}
+              >
                 {!isAdding && (
                   <UserListToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
+                    sx={{ color: 'white' }}
                   />
                 )}
                 <EnhancedTableToolbar />
@@ -610,7 +685,7 @@ export default function ProductsTable(props) {
                 <TableBody>
                   {visibleRows.map((row, index) => {
                     return (
-                      <TableRow hover key={row.name} sx={{ cursor: 'pointer' }}>
+                      <TableRow hover key={row.name} sx={{ cursor: 'pointer', backgroundColor: 'white' }}>
                         <TableCell>
                           {props.columnName !== 'content' &&
                             props.columnName !== 'type' &&
@@ -715,6 +790,7 @@ export default function ProductsTable(props) {
               </Table>
             </TableContainer>
             <TablePagination
+              sx={{ backgroundColor: '#FFEAD8' }}
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
               count={rows.length}
@@ -975,7 +1051,13 @@ export default function ProductsTable(props) {
                     }}
                     onClick={() => {
                       if (inputValue === '' || selectedFile === null) {
-                        swal('אנא מלאי את השדות הנדרשים', '', 'warning');
+                        handleCancelClick();
+                        Swal.fire({
+                          title: 'אנא מלאי את השדות הנדרשים',
+                          icon: 'warning',
+                          confirmButtonColor: '#3085d6',
+                          confirmButtonText: 'אוקיי', // Change the button text to 'אוקיי'
+                        });
                       } else {
                         handleUploadImage();
                       }
@@ -1168,7 +1250,13 @@ export default function ProductsTable(props) {
                     }}
                     onClick={() => {
                       if (inputValue === '' || selectedColor === '#ffffff') {
-                        swal('אנא מלאי את השדות הנדרשים', '', 'error');
+                        handleCancelClick();
+                        Swal.fire({
+                          title: 'אנא מלאי את השדות הנדרשים',
+                          icon: 'warning',
+                          confirmButtonColor: '#3085d6',
+                          confirmButtonText: 'אוקיי',
+                        });
                       } else {
                         AddColor();
                       }

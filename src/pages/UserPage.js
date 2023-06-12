@@ -222,8 +222,8 @@ export default function UserPage() {
       </Helmet>
 
       <Container >
-        <Card sx={{ backgroundColor: '#ede6d7'  }}>
-          <Box sx={{ display: 'flex', alignItems: 'right', justifyContent: 'flex-end' }}>
+        <Card >
+          <Box sx={{ display: 'flex', alignItems: 'right', justifyContent: 'flex-end' ,backgroundColor:'#FFEAD8'}}>
             <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
           </Box>
 
@@ -238,6 +238,7 @@ export default function UserPage() {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
+                  
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
@@ -321,6 +322,7 @@ export default function UserPage() {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             labelRowsPerPage="שורות לעמוד"
+            sx={{backgroundColor:"#FFEAD8"}}
           />
         </Card>
       </Container>

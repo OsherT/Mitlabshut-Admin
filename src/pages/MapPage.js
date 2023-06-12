@@ -80,7 +80,7 @@ function applySortFilter(array, comparator, query) {
 
 const MapPage = (props) => {
   const mapStyles = {
-    width: "100%",
+    width: '100%',
     height: 300,
   };
 
@@ -291,12 +291,12 @@ const MapPage = (props) => {
               swal('!החנות עודכנה', 'החנות עודכנה בהצלחה', 'success');
               handleCloseForm();
               GetStores();
-              setname("");
-              setAddress("");
-              setphoneNumber("");
-              setdescription("");
-              setIGLink("");
-              setFBLink("");
+              setname('');
+              setAddress('');
+              setphoneNumber('');
+              setdescription('');
+              setIGLink('');
+              setFBLink('');
             })
             .catch((error) => {
               // Handle the error
@@ -405,7 +405,14 @@ const MapPage = (props) => {
           style={{ position: 'absolute', bottom: '0', left: '0', right: '0', top: '100%', zIndex: '1', margin: '10px' }}
         >
           <Card>
-            <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+            <Box sx={{ backgroundColor: '#FFEAD8' }}>
+              <UserListToolbar
+                numSelected={selected.length}
+                filterName={filterName}
+                onFilterName={handleFilterByName}
+              />
+            </Box>
+
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
@@ -507,6 +514,7 @@ const MapPage = (props) => {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
               labelRowsPerPage="שורות לעמוד"
+              sx={{ backgroundColor: '#FFEAD8' }}
             />
           </Card>
           <Popover
@@ -686,8 +694,12 @@ const MapPage = (props) => {
             </>
           </DialogContent>
           <DialogActions>
-            <Button variant="outlined" className="hvr-bob"onClick={handleCloseForm}>ביטול</Button>
-            <Button variant="contained" className="hvr-bob"onClick={handleAdd}>{editFlag === true ? 'עדכון' : 'הוספה '}</Button>
+            <Button variant="outlined" className="hvr-bob" onClick={handleCloseForm}>
+              ביטול
+            </Button>
+            <Button variant="contained" className="hvr-bob" onClick={handleAdd}>
+              {editFlag === true ? 'עדכון' : 'הוספה '}
+            </Button>
           </DialogActions>
         </Box>
       </Dialog>{' '}

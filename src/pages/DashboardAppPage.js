@@ -117,19 +117,17 @@ export default function DashboardAppPage() {
               total={StoresNum}
               icon={'system-uicons:location'}
               color="dash1"
-
-              />
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3} className="hvr-grow-shadow">
             <AppWidgetSummary
               className="hvr-grow-shadow"
-              style={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.4)', width: '100%'  }}
+              style={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.4)', width: '100%' }}
               title="משתמשות פעילות"
               total={ActiveUsersNum}
               icon={'system-uicons:user'}
               color="dash2"
-
             />
           </Grid>
 
@@ -141,7 +139,6 @@ export default function DashboardAppPage() {
               className="hvr-grow-shadow"
               style={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.4)', width: '100%' }}
               color="dash3"
-
             />
           </Grid>
 
@@ -162,25 +159,15 @@ export default function DashboardAppPage() {
                
             */}
         </Divider>
-        <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2a-content"
-          id="panel2a-header"
-        >
-          <Typography>Accordion 2</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-        <ProductsTable
-          getApi={sentencesGetApi}
-          postApi={sentencesPostApi}
-          deleteApi={sentencesDeleteApi}
-          updateApi={sentencesUpdateApi}
-          columnName={sentencesColumnName}
-        />
-        </AccordionDetails>
-      </Accordion>
         
+            <ProductsTable
+              getApi={sentencesGetApi}
+              postApi={sentencesPostApi}
+              deleteApi={sentencesDeleteApi}
+              updateApi={sentencesUpdateApi}
+              columnName={sentencesColumnName}
+            />
+         
       </Container>
     </>
   );
